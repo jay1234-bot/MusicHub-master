@@ -73,6 +73,10 @@ module.exports = {
         "spin-slow": {
           from: { transform: 'rotate(0deg)' },
           to: { transform: 'rotate(360deg)' },
+        },
+        "pulse-once": {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.05)' },
         }
       },
       animation: {
@@ -80,6 +84,7 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
         "shine": "shine 8s ease-in-out infinite",
         "spin-slow": "spin-slow 20s linear infinite",
+        "pulse-once": "pulse-once 4s ease-in-out infinite",
       },
     },
   },

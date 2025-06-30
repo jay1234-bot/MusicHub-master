@@ -149,10 +149,10 @@ export default function Player({ id }) {
                 <div className="sm:flex px-6 md:px-20 lg:px-32 grid gap-8 w-full">
                     <div>
                         {data.length <= 0 ? (
-                            <Skeleton className="w-[250px] aspect-square rounded-2xl h-[250px]" />
+                            <Skeleton className="w-[250px] aspect-square rounded-full h-[250px]" />
                         ) : (
                             <div className="relative">
-                                <img src={data.image[2].url} className={`h-[250px] aspect-square bg-secondary/50 rounded-2xl w-[250px] object-cover animate-spin-slow ${playing ? '[animation-play-state:running]' : '[animation-play-state:paused]'}`} />
+                                <img src={data.image[2].url} className={`h-[250px] aspect-square bg-secondary/50 rounded-full w-[250px] object-cover animate-spin-slow animate-pulse-once ${playing ? '[animation-play-state:running]' : '[animation-play-state:paused]'}`} />
                                 <img src={data.image[2].url} className="hidden dark:block absolute top-0 left-0 w-full h-full blur-3xl -z-10 opacity-75" />
                             </div>
                         )}
