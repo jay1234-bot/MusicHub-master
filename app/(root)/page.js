@@ -38,8 +38,8 @@ export default function Page() {
     <main className="px-6 py-5 md:px-20 lg:px-32">
       <div>
         <div className="grid">
-          <h1 className="text-base">Songs</h1>
-          <p className="text-xs text-muted-foreground">Top new released songs.</p>
+          <h1 className="text-2xl font-bold">Songs</h1>
+          <p className="text-sm text-muted-foreground">Top new released songs.</p>
         </div>
         <ScrollArea className="rounded-md mt-4">
           <div className="flex gap-4">
@@ -51,9 +51,11 @@ export default function Page() {
         </ScrollArea>
       </div>
 
-      <div className="mt-14">
-        <h1 className="text-base">Albums</h1>
-        <p className="text-xs text-muted-foreground">Top new released albums.</p>
+      <div className="mt-12">
+        <div className="grid">
+          <h1 className="text-2xl font-bold">Albums</h1>
+          <p className="text-sm text-muted-foreground">Top new released albums.</p>
+        </div>
         <ScrollArea className="rounded-md mt-6">
           <div className="flex gap-4">
             {albums.length ? albums.slice().map((song) => (
@@ -65,8 +67,10 @@ export default function Page() {
       </div>
 
       <div className="mt-12">
-        <h1 className="text-base">Artists</h1>
-        <p className="text-xs text-muted-foreground">Most searched artists.</p>
+        <div className="grid">
+          <h1 className="text-2xl font-bold">Artists</h1>
+          <p className="text-sm text-muted-foreground">Most searched artists.</p>
+        </div>
         <ScrollArea className="rounded-md mt-6">
           <div className="flex gap-4">
             {latest.length ? [...new Set(latest.map(a => a.artists.primary[0].id))].map(id => (
@@ -83,8 +87,10 @@ export default function Page() {
       </div>
 
       <div className="mt-12">
-        <h1 className="text-base">Trending</h1>
-        <p className="text-xs text-muted-foreground">Most played songs in this week.</p>
+        <div className="grid">
+          <h1 className="text-2xl font-bold">Trending</h1>
+          <p className="text-sm text-muted-foreground">Most played songs in this week.</p>
+        </div>
         <ScrollArea className="rounded-md mt-6">
           <div className="flex gap-4">
             {popular.length ? popular.map((song) => (

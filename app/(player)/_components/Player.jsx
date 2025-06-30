@@ -136,7 +136,7 @@ export default function Player({ id }) {
                             <Skeleton className="md:w-[130px] aspect-square rounded-2xl md:h-[150px]" />
                         ) : (
                             <div className="relative">
-                                <img src={data.image[2].url} className="sm:h-[150px] h-full aspect-square bg-secondary/50 rounded-2xl sm:w-[200px] w-full sm:mx-0 mx-auto object-cover" />
+                                <img src={data.image[2].url} className={`sm:h-[150px] h-full aspect-square bg-secondary/50 rounded-2xl sm:w-[200px] w-full sm:mx-0 mx-auto object-cover animate-spin-slow ${playing ? '[animation-play-state:running]' : '[animation-play-state:paused]'}`} />
                                 <img src={data.image[2].url} className="hidden dark:block absolute top-0 left-0 w-[110%] h-[110%] blur-3xl -z-10 opacity-50" />
                             </div>
                         )}

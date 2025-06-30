@@ -12,11 +12,11 @@ export default function SongCard({ title, image, artist, id, desc }) {
         localStorage.setItem("last-played", id);
     };
     return (
-        <div className="h-fit w-[200px]">
+        <div className="h-fit w-[200px] transition-transform duration-300 ease-in-out hover:scale-105">
             <div className="overflow-hidden rounded-md">
                 {image ? (
                     <div className="relative" onClick={() => { ids.setMusic(id); setLastPlayed(); }}>
-                        <img src={image} alt={title} className="h-[182px] blurz w-full bg-secondary/60 rounded-md transition hover:scale-105 cursor-context-menu" />
+                        <img src={image} alt={title} className="h-[182px] blurz w-full bg-secondary/60 rounded-md cursor-context-menu" />
                         <div className="cursor-pointer absolute z-10 bottom-2 left-2 bg-background/60 backdrop-blur-md rounded-full h-8 w-8 flex items-center justify-center"><IoPlay className="w-4 h-4 -mr-0.5 dark:fill-white"/></div>
                     </div>
                 ) : (

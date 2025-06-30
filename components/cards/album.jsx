@@ -4,11 +4,11 @@ import { Badge } from "../ui/badge";
 
 export default function AlbumCard({ title, image, artist, id, desc, lang }) {
     return (
-        <div className="h-fit w-[200px]">
+        <div className="h-fit w-[200px] transition-transform duration-300 ease-in-out hover:scale-105">
             <div className="overflow-hidden rounded-md">
                 {image ? (
                     <Link href={`/${id}`}>
-                        <img src={image} alt={title} className="h-[182px] w-full bg-secondary/60 rounded-md transition hover:scale-105 cursor-pointer" />
+                        <img src={image} alt={title} className="h-[182px] w-full bg-secondary/60 rounded-md cursor-pointer" />
                     </Link>
                 ) : (
                     <Skeleton className="w-full h-[182px]" />
