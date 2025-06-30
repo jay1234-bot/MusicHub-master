@@ -1,7 +1,7 @@
 "use client"
 import { Button } from "@/components/ui/button";
 import { getSongsById, getSongsLyricsById } from "@/lib/fetch";
-import { Download, Pause, Play, RedoDot, UndoDot, Repeat, Loader2, Bookmark, BookmarkCheck, Repeat1, Share2 } from "lucide-react";
+import { Download, Pause, Play, RedoDot, UndoDot, Repeat, Loader2, Bookmark, BookmarkCheck, Repeat1, Share2, Music2 } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
@@ -12,9 +12,19 @@ import { NextContext } from "@/hooks/use-context";
 import Next from "@/components/cards/next";
 import { useMusic } from "@/components/music-provider";
 import { IoPause } from "react-icons/io5";
+import {
+    Credenza,
+    CredenzaBody,
+    CredenzaContent,
+    CredenzaHeader,
+    CredenzaTitle,
+    CredenzaTrigger,
+} from "@/components/ui/credenza"
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Player({ id }) {
     const [data, setData] = useState([]);
+    const [lyrics, setLyrics] = useState(null);
     const [playing, setPlaying] = useState(true);
     const audioRef = useRef(null);
     const [currentTime, setCurrentTime] = useState(0);
@@ -38,6 +48,12 @@ export default function Player({ id }) {
             setAudioURL(data?.data[0]?.downloadUrl[0]?.url);
         }
     };
+
+    const getLyrics = async () => {
+        const get = await getSongsLyricsById(id);
+        const data = await get.json();
+        setLyrics(data.data.lyrics);
+    }
 
     const formatTime = (time) => {
         const minutes = Math.floor(time / 60);
@@ -130,14 +146,14 @@ export default function Player({ id }) {
         <div className="mb-3 mt-10">
             <audio onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onLoadedData={() => setDuration(audioRef.current.duration)} autoPlay={playing} src={audioURL} ref={audioRef}></audio>
             <div className="grid gap-6 w-full">
-                <div className="sm:flex px-6 md:px-20 lg:px-32 grid gap-5 w-full">
+                <div className="sm:flex px-6 md:px-20 lg:px-32 grid gap-8 w-full">
                     <div>
                         {data.length <= 0 ? (
-                            <Skeleton className="md:w-[130px] aspect-square rounded-2xl md:h-[150px]" />
+                            <Skeleton className="w-[250px] aspect-square rounded-2xl h-[250px]" />
                         ) : (
                             <div className="relative">
-                                <img src={data.image[2].url} className={`sm:h-[150px] h-full aspect-square bg-secondary/50 rounded-2xl sm:w-[200px] w-full sm:mx-0 mx-auto object-cover animate-spin-slow ${playing ? '[animation-play-state:running]' : '[animation-play-state:paused]'}`} />
-                                <img src={data.image[2].url} className="hidden dark:block absolute top-0 left-0 w-[110%] h-[110%] blur-3xl -z-10 opacity-50" />
+                                <img src={data.image[2].url} className={`h-[250px] aspect-square bg-secondary/50 rounded-2xl w-[250px] object-cover animate-spin-slow ${playing ? '[animation-play-state:running]' : '[animation-play-state:paused]'}`} />
+                                <img src={data.image[2].url} className="hidden dark:block absolute top-0 left-0 w-full h-full blur-3xl -z-10 opacity-75" />
                             </div>
                         )}
                     </div>
@@ -163,8 +179,8 @@ export default function Player({ id }) {
                     ) : (
                         <div className="flex flex-col justify-between w-full">
                             <div className="sm:mt-0 mt-3 animate-fade-in animate-slide-in-from-bottom-2">
-                                <h1 className="text-xl font-bold md:max-w-lg">{data.name}</h1>
-                                <p className="text-sm text-muted-foreground">by <Link href={"/search/" + `${encodeURI(data.artists.primary[0].name.toLowerCase().split(" ").join("+"))}`} className="text-foreground">{data.artists.primary[0]?.name || "unknown"}</Link></p>
+                                <h1 className="text-4xl font-bold md:max-w-lg">{data.name}</h1>
+                                <p className="text-lg text-muted-foreground mt-1">by <Link href={"/search/" + `${encodeURI(data.artists.primary[0].name.toLowerCase().split(" ").join("+"))}`} className="text-foreground">{data.artists.primary[0]?.name || "unknown"}</Link></p>
                             </div>
                             <div className="grid gap-2 w-full mt-5 sm:mt-0">
                                 <Slider onValueChange={handleSeek} value={[currentTime]} max={duration} className="w-full" />
@@ -193,6 +209,30 @@ export default function Player({ id }) {
                                             )}
                                         </Button>
                                         <Button size="icon" variant="ghost" onClick={handleShare}><Share2 className="h-4 w-4" /></Button>
+                                        <Credenza>
+                                            <CredenzaTrigger asChild>
+                                                <Button size="icon" variant="ghost" onClick={getLyrics}><Music2 className="h-4 w-4" /></Button>
+                                            </CredenzaTrigger>
+                                            <CredenzaContent>
+                                                <CredenzaHeader>
+                                                    <CredenzaTitle>{data.name} - Lyrics</CredenzaTitle>
+                                                </CredenzaHeader>
+                                                <CredenzaBody>
+                                                    <ScrollArea className="h-80">
+                                                        {lyrics ? (
+                                                            <p dangerouslySetInnerHTML={{ __html: lyrics.replace(/\n/g, '<br />') }} className="text-muted-foreground"></p>
+                                                        ) : (
+                                                            <div className="grid gap-2">
+                                                                <Skeleton className="h-4 w-full" />
+                                                                <Skeleton className="h-4 w-full" />
+                                                                <Skeleton className="h-4 w-full" />
+                                                                <Skeleton className="h-4 w-1/2" />
+                                                            </div>
+                                                        )}
+                                                    </ScrollArea>
+                                                </CredenzaBody>
+                                            </CredenzaContent>
+                                        </Credenza>
                                     </div>
                                 </div>
                             </div>
