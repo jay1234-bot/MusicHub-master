@@ -43,7 +43,7 @@ export default function Page() {
         </div>
         <ScrollArea className="rounded-md mt-4">
           <div className="flex gap-4">
-            {latest.length ? latest.slice().map((song) => (
+            {latest.length ? latest.slice(0, 20).map((song) => (
               <SongCard key={song.id} image={song.image[2].url} album={song.album} title={song.name} artist={song.artists.primary[0].name} id={song.id} />
             )) : Array.from({ length: 10 }).map((_, i) => <SongCard key={i} />)}
           </div>
@@ -58,7 +58,7 @@ export default function Page() {
         </div>
         <ScrollArea className="rounded-md mt-6">
           <div className="flex gap-4">
-            {albums.length ? albums.slice().map((song) => (
+            {albums.length ? albums.slice(0, 20).map((song) => (
               <AlbumCard key={song.id} lang={song.language} image={song.image[2].url} album={song.album} title={song.name} artist={song.artists.primary[0].name} id={`album/${song.id}`} />
             )) : Array.from({ length: 10 }).map((_, i) => <SongCard key={i} />)}
           </div>
@@ -93,7 +93,7 @@ export default function Page() {
         </div>
         <ScrollArea className="rounded-md mt-6">
           <div className="flex gap-4">
-            {popular.length ? popular.map((song) => (
+            {popular.length ? popular.slice(0, 20).map((song) => (
               <SongCard key={song.id} id={song.id} image={song.image[2].url} title={song.name} artist={song.artists.primary[0].name} />
             )) : Array.from({ length: 10 }).map((_, i) => <SongCard key={i} />)}
           </div>

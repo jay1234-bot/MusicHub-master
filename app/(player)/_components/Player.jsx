@@ -162,7 +162,7 @@ export default function Player({ id }) {
                         </div>
                     ) : (
                         <div className="flex flex-col justify-between w-full">
-                            <div className="sm:mt-0 mt-3">
+                            <div className="sm:mt-0 mt-3 animate-fade-in animate-slide-in-from-bottom-2">
                                 <h1 className="text-xl font-bold md:max-w-lg">{data.name}</h1>
                                 <p className="text-sm text-muted-foreground">by <Link href={"/search/" + `${encodeURI(data.artists.primary[0].name.toLowerCase().split(" ").join("+"))}`} className="text-foreground">{data.artists.primary[0]?.name || "unknown"}</Link></p>
                             </div>
