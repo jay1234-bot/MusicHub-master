@@ -45,7 +45,7 @@ function MinimizedPlayer({ data, playing, togglePlayPause, setExpanded }) {
 function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, handleSeek, currentTime, duration, setExpanded, audioURL }) {
     return (
         <motion.div
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto px-2 py-4"
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
@@ -69,30 +69,30 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
                     100% { filter: blur(2px) brightness(1.1); }
                 }
             `}</style>
-            <Button size="icon" variant="ghost" className="absolute top-6 left-6 md:top-10 md:left-10" onClick={() => setExpanded(false)} aria-label="Back">
+            <Button size="icon" variant="ghost" className="absolute top-4 left-4 md:top-6 md:left-6" onClick={() => setExpanded(false)} aria-label="Back">
                 <ChevronDown className="h-7 w-7" />
             </Button>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center w-full mt-8 md:mt-0">
                 {data?.image ? (
                     <img
                         src={data?.image[2]?.url}
                         alt={data?.name}
-                        className="rounded-full w-72 h-72 object-cover shadow-2xl border-4 border-dark-800"
+                        className="rounded-full w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 object-cover shadow-2xl border-4 border-dark-800"
                         style={{ boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)" }}
                     />
                 ) : (
-                    <Skeleton className="rounded-full w-72 h-72" />
+                    <Skeleton className="rounded-full w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72" />
                 )}
             </div>
-            <div className="mt-8 text-center">
-                <h2 className="text-3xl font-extrabold text-white mb-2 truncate max-w-xs mx-auto">
+            <div className="mt-6 md:mt-8 text-center w-full">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 truncate max-w-xs mx-auto">
                     {data?.name || <Skeleton className="h-8 w-40 mx-auto" />}
                 </h2>
-                <p className="text-lg text-blue-300 font-medium truncate max-w-md mx-auto">
+                <p className="text-base sm:text-lg text-blue-300 font-medium truncate max-w-md mx-auto">
                     {data?.artists?.primary?.map(a => a.name).join(", ") || <Skeleton className="h-5 w-32 mx-auto" />}
                 </p>
             </div>
-            <div className="w-full max-w-xl mt-8">
+            <div className="w-full max-w-xl mt-6 md:mt-8 px-1 sm:px-4">
                 {duration ? (
                     <>
                         <Slider
@@ -103,7 +103,7 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
                             max={duration}
                             className="w-full"
                         />
-                        <div className="flex justify-between text-blue-100 text-sm mt-2">
+                        <div className="flex justify-between text-blue-100 text-xs sm:text-sm mt-2">
                             <span>{formatTime(currentTime)}</span>
                             <span>{formatTime(duration)}</span>
                         </div>
@@ -112,7 +112,7 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
                     <Skeleton className="h-2 w-full" />
                 )}
             </div>
-            <div className="flex items-center justify-center gap-6 mt-8">
+            <div className="flex items-center justify-center gap-4 sm:gap-6 mt-6 md:mt-8 w-full">
                 <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-blue-200" variant={!isLooping ? "ghost" : "secondary"} onClick={loopSong} aria-label="Loop">
                     {!isLooping ? <Repeat className="h-6 w-6" /> : <Repeat1 className="h-6 w-6" />}
                 </Button>
