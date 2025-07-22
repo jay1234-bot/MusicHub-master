@@ -1,3 +1,4 @@
+"use client";
 import Player from "@/components/cards/player";
 import Footer from "@/components/page/footer";
 import Header from "@/components/page/header";
