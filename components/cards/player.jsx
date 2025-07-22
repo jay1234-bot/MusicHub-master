@@ -1,7 +1,7 @@
 "use client";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
-import { Repeat, Repeat1, Play, Pause, Download, SkipBack, SkipForward } from "lucide-react";
+import { Repeat, Repeat1, Play, Pause, Download, SkipBack, SkipForward, ChevronDown, Maximize2 } from "lucide-react";
 import { Slider } from "../ui/slider";
 import { getSongsById } from "@/lib/fetch";
 import { MusicContext } from "@/hooks/use-context";
@@ -17,6 +17,7 @@ export default function Player() {
     const [duration, setDuration] = useState(0);
     const [audioURL, setAudioURL] = useState("");
     const [isLooping, setIsLooping] = useState(false);
+    const [expanded, setExpanded] = useState(false);
     const values = useContext(MusicContext);
 
     const getSong = async () => {
@@ -84,8 +85,110 @@ export default function Player() {
         }
     }, [values.music]);
 
+    // Minimized player bar
+    const MinimizedPlayer = () => (
+        <motion.div
+            className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 border-t border-border shadow-lg flex items-center justify-between px-4 py-2 md:px-10"
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 120, damping: 18 }}
+            onClick={() => setExpanded(true)}
+            style={{ cursor: "pointer" }}
+        >
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+                {data?.image ? (
+                    <img src={data?.image[1]?.url} alt={data?.name} className="rounded-md w-12 h-12 object-cover" />
+                ) : (
+                    <Skeleton className="rounded-md w-12 h-12" />
+                )}
+                <div className="min-w-0">
+                    <div className="font-semibold truncate text-base">{data?.name || <Skeleton className="h-4 w-24" />}</div>
+                    <div className="text-xs text-muted-foreground truncate">{data?.artists?.primary?.map(a => a.name).join(", ") || <Skeleton className="h-3 w-16" />}</div>
+                </div>
+            </div>
+            <div className="flex items-center gap-2">
+                <Button size="icon" variant="ghost" className="text-primary" onClick={e => { e.stopPropagation(); togglePlayPause(); }} aria-label={playing ? "Pause" : "Play"}>
+                    {playing ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+                </Button>
+                <Button size="icon" variant="ghost" onClick={e => { e.stopPropagation(); setExpanded(true); }} aria-label="Expand">
+                    <Maximize2 className="h-6 w-6" />
+                </Button>
+            </div>
+        </motion.div>
+    );
+
+    // Expanded full-screen player
+    const ExpandedPlayer = () => (
+        <motion.div
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-lg"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 120, damping: 18 }}
+        >
+            <Button size="icon" variant="ghost" className="absolute top-6 left-6 md:top-10 md:left-10" onClick={() => setExpanded(false)} aria-label="Back">
+                <ChevronDown className="h-7 w-7" />
+            </Button>
+            <div className="flex flex-col items-center">
+                {data?.image ? (
+                    <img
+                        src={data?.image[2]?.url}
+                        alt={data?.name}
+                        className="rounded-full w-72 h-72 object-cover shadow-2xl border-4 border-dark-800"
+                        style={{ boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)" }}
+                    />
+                ) : (
+                    <Skeleton className="rounded-full w-72 h-72" />
+                )}
+            </div>
+            <div className="mt-8 text-center">
+                <h2 className="text-3xl font-extrabold text-white mb-2 truncate max-w-xs mx-auto">
+                    {data?.name || <Skeleton className="h-8 w-40 mx-auto" />}
+                </h2>
+                <p className="text-lg text-gray-300 font-medium truncate max-w-md mx-auto">
+                    {data?.artists?.primary?.map(a => a.name).join(", ") || <Skeleton className="h-5 w-32 mx-auto" />}
+                </p>
+            </div>
+            <div className="w-full max-w-xl mt-8">
+                {duration ? (
+                    <>
+                        <Slider
+                            thumbClassName="bg-blue-500"
+                            trackClassName="h-2 bg-gray-700"
+                            onValueChange={handleSeek}
+                            value={[currentTime]}
+                            max={duration}
+                            className="w-full"
+                        />
+                        <div className="flex justify-between text-white text-sm mt-2">
+                            <span>{formatTime(currentTime)}</span>
+                            <span>{formatTime(duration)}</span>
+                        </div>
+                    </>
+                ) : (
+                    <Skeleton className="h-2 w-full" />
+                )}
+            </div>
+            <div className="flex items-center justify-center gap-6 mt-8">
+                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-white" variant={!isLooping ? "ghost" : "secondary"} onClick={loopSong} aria-label="Loop">
+                    {!isLooping ? <Repeat className="h-6 w-6" /> : <Repeat1 className="h-6 w-6" />}
+                </Button>
+                <Button size="icon" className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white" onClick={togglePlayPause} aria-label={playing ? "Pause" : "Play"}>
+                    {playing ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
+                </Button>
+                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-white" aria-label="Previous" disabled>
+                    <SkipBack className="h-6 w-6" />
+                </Button>
+                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-white" aria-label="Download" onClick={() => window.open(audioURL, '_blank')}>
+                    <Download className="h-6 w-6" />
+                </Button>
+            </div>
+        </motion.div>
+    );
+
     return (
-        <main className="min-h-screen w-full flex flex-col items-center justify-center bg-grid-pattern bg-dark-900">
+        <main>
             <audio
                 autoPlay={playing}
                 onPlay={() => setPlaying(true)}
@@ -96,72 +199,7 @@ export default function Player() {
             ></audio>
             <AnimatePresence>
                 {values.music && (
-                    <motion.div
-                        className="flex flex-col items-center justify-center w-full max-w-xl mx-auto p-6"
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 40 }}
-                        transition={{ type: "spring", stiffness: 120, damping: 18 }}
-                    >
-                        {/* Album Art */}
-                        <div className="flex flex-col items-center">
-                            {data?.image ? (
-                                <img
-                                    src={data?.image[2]?.url}
-                                    alt={data?.name}
-                                    className="rounded-full w-72 h-72 object-cover shadow-2xl border-4 border-dark-800"
-                                    style={{ boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)" }}
-                                />
-                            ) : (
-                                <Skeleton className="rounded-full w-72 h-72" />
-                            )}
-                        </div>
-                        {/* Song Info */}
-                        <div className="mt-8 text-center">
-                            <h2 className="text-3xl font-extrabold text-white mb-2 truncate max-w-xs mx-auto">
-                                {data?.name || <Skeleton className="h-8 w-40 mx-auto" />}
-                            </h2>
-                            <p className="text-lg text-gray-300 font-medium truncate max-w-md mx-auto">
-                                {data?.artists?.primary?.map(a => a.name).join(", ") || <Skeleton className="h-5 w-32 mx-auto" />}
-                            </p>
-                        </div>
-                        {/* Progress Bar */}
-                        <div className="w-full mt-8">
-                            {duration ? (
-                                <>
-                                    <Slider
-                                        thumbClassName="bg-blue-500"
-                                        trackClassName="h-2 bg-gray-700"
-                                        onValueChange={handleSeek}
-                                        value={[currentTime]}
-                                        max={duration}
-                                        className="w-full"
-                                    />
-                                    <div className="flex justify-between text-white text-sm mt-2">
-                                        <span>{formatTime(currentTime)}</span>
-                                        <span>{formatTime(duration)}</span>
-                                    </div>
-                                </>
-                            ) : (
-                                <Skeleton className="h-2 w-full" />
-                            )}
-                        </div>
-                        {/* Controls */}
-                        <div className="flex items-center justify-center gap-6 mt-8">
-                            <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-white" variant={!isLooping ? "ghost" : "secondary"} onClick={loopSong} aria-label="Loop">
-                                {!isLooping ? <Repeat className="h-6 w-6" /> : <Repeat1 className="h-6 w-6" />}
-                            </Button>
-                            <Button size="icon" className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white" onClick={togglePlayPause} aria-label={playing ? "Pause" : "Play"}>
-                                {playing ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
-                            </Button>
-                            <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-white" aria-label="Previous" disabled>
-                                <SkipBack className="h-6 w-6" />
-                            </Button>
-                            <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-white" aria-label="Download" onClick={() => window.open(audioURL, '_blank')}>
-                                <Download className="h-6 w-6" />
-                            </Button>
-                        </div>
-                    </motion.div>
+                    expanded ? <ExpandedPlayer key="expanded" /> : <MinimizedPlayer key="minimized" />
                 )}
             </AnimatePresence>
             <style jsx global>{`
