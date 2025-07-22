@@ -7,88 +7,10 @@ import { getSongsById } from "@/lib/fetch";
 import { MusicContext } from "@/hooks/use-context";
 import { Skeleton } from "../ui/skeleton";
 import { useMusic } from "../music-provider";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
-export default function Player() {
-    const [data, setData] = useState([]);
-    const [playing, setPlaying] = useState(false);
-    const audioRef = useRef(null);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [audioURL, setAudioURL] = useState("");
-    const [isLooping, setIsLooping] = useState(false);
-    const [expanded, setExpanded] = useState(false);
-    const values = useContext(MusicContext);
-
-    const getSong = async () => {
-        const get = await getSongsById(values.music);
-        const data = await get.json();
-        setData(data.data[0]);
-        if (data?.data[0]?.downloadUrl[2]?.url) {
-            setAudioURL(data?.data[0]?.downloadUrl[2]?.url);
-        } else if (data?.data[0]?.downloadUrl[1]?.url) {
-            setAudioURL(data?.data[0]?.downloadUrl[1]?.url);
-        } else {
-            setAudioURL(data?.data[0]?.downloadUrl[0]?.url);
-        }
-    };
-
-    const formatTime = (time) => {
-        const minutes = Math.floor(time / 60);
-        const seconds = Math.floor(time % 60);
-        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-    };
-
-    const togglePlayPause = (e) => {
-        e?.stopPropagation();
-        if (playing) {
-            audioRef.current.pause();
-        } else {
-            audioRef.current.play();
-        }
-        setPlaying(!playing);
-    };
-
-    const handleSeek = (e) => {
-        const seekTime = e[0];
-        audioRef.current.currentTime = seekTime;
-        setCurrentTime(seekTime);
-    };
-
-    const loopSong = (e) => {
-        e?.stopPropagation();
-        audioRef.current.loop = !audioRef.current.loop;
-        setIsLooping(!isLooping);
-    };
-
-    const { current, setCurrent } = useMusic();
-    useEffect(() => {
-        if (values.music) {
-            getSong();
-            if (current) {
-                audioRef.current.currentTime = parseFloat(current + 1);
-            }
-            setPlaying(localStorage.getItem("p") == "true" && true || !localStorage.getItem("p") && true);
-            const handleTimeUpdate = () => {
-                try {
-                    setCurrentTime(audioRef.current.currentTime);
-                    setDuration(audioRef.current.duration);
-                    setCurrent(audioRef.current.currentTime);
-                } catch (e) {
-                    setPlaying(false);
-                }
-            };
-            audioRef.current.addEventListener("timeupdate", handleTimeUpdate);
-            return () => {
-                if (audioRef.current) {
-                    audioRef.current.removeEventListener("timeupdate", handleTimeUpdate);
-                }
-            };
-        }
-    }, [values.music]);
-
-    // Minimized player bar
-    const MinimizedPlayer = () => (
+function MinimizedPlayer({ data, playing, togglePlayPause, setExpanded }) {
+    return (
         <motion.div
             className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 border-t border-border shadow-lg flex items-center justify-between px-4 py-2 md:px-10"
             initial={false}
@@ -109,18 +31,19 @@ export default function Player() {
                 </div>
             </div>
             <div className="flex items-center gap-2">
-                <Button size="icon" variant="ghost" className="text-primary" onClick={e => togglePlayPause(e)} aria-label={playing ? "Pause" : "Play"}>
+                <Button size="icon" variant="ghost" className="text-primary" onClick={togglePlayPause} aria-label={playing ? "Pause" : "Play"}>
                     {playing ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
                 </Button>
-                <Button size="icon" variant="ghost" onClick={e => { e.stopPropagation(); setExpanded(true); }} aria-label="Expand">
+                <Button size="icon" variant="ghost" onClick={() => setExpanded(true)} aria-label="Expand">
                     <Maximize2 className="h-6 w-6" />
                 </Button>
             </div>
         </motion.div>
     );
+}
 
-    // Expanded full-screen player with animated dark/blue background
-    const ExpandedPlayer = () => (
+function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, handleSeek, currentTime, duration, setExpanded, audioURL }) {
+    return (
         <motion.div
             className="fixed inset-0 z-50 flex flex-col items-center justify-center"
             initial={{ opacity: 0, scale: 0.98 }}
@@ -190,21 +113,101 @@ export default function Player() {
                 )}
             </div>
             <div className="flex items-center justify-center gap-6 mt-8">
-                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-blue-200" variant={!isLooping ? "ghost" : "secondary"} onClick={e => loopSong(e)} aria-label="Loop">
+                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-blue-200" variant={!isLooping ? "ghost" : "secondary"} onClick={loopSong} aria-label="Loop">
                     {!isLooping ? <Repeat className="h-6 w-6" /> : <Repeat1 className="h-6 w-6" />}
                 </Button>
-                <Button size="icon" className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white" onClick={e => togglePlayPause(e)} aria-label={playing ? "Pause" : "Play"}>
+                <Button size="icon" className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white" onClick={togglePlayPause} aria-label={playing ? "Pause" : "Play"}>
                     {playing ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
                 </Button>
                 <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-blue-200" aria-label="Previous" disabled>
                     <SkipBack className="h-6 w-6" />
                 </Button>
-                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-blue-200" aria-label="Download" onClick={e => { e.stopPropagation(); window.open(audioURL, '_blank'); }}>
+                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-blue-200" aria-label="Download" onClick={() => window.open(audioURL, '_blank')}>
                     <Download className="h-6 w-6" />
                 </Button>
             </div>
         </motion.div>
     );
+}
+
+function formatTime(time) {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+export default function Player() {
+    const [data, setData] = useState([]);
+    const [playing, setPlaying] = useState(false);
+    const audioRef = useRef(null);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [audioURL, setAudioURL] = useState("");
+    const [isLooping, setIsLooping] = useState(false);
+    const [expanded, setExpanded] = useState(false);
+    const values = useContext(MusicContext);
+    const { current, setCurrent } = useMusic();
+
+    useEffect(() => {
+        if (values.music) {
+            getSong();
+            if (current) {
+                audioRef.current.currentTime = parseFloat(current + 1);
+            }
+            setPlaying(localStorage.getItem("p") == "true" && true || !localStorage.getItem("p") && true);
+            const handleTimeUpdate = () => {
+                try {
+                    setCurrentTime(audioRef.current.currentTime);
+                    setDuration(audioRef.current.duration);
+                    setCurrent(audioRef.current.currentTime);
+                } catch (e) {
+                    setPlaying(false);
+                }
+            };
+            audioRef.current.addEventListener("timeupdate", handleTimeUpdate);
+            return () => {
+                if (audioRef.current) {
+                    audioRef.current.removeEventListener("timeupdate", handleTimeUpdate);
+                }
+            };
+        }
+        // eslint-disable-next-line
+    }, [values.music]);
+
+    async function getSong() {
+        const get = await getSongsById(values.music);
+        const data = await get.json();
+        setData(data.data[0]);
+        if (data?.data[0]?.downloadUrl[2]?.url) {
+            setAudioURL(data?.data[0]?.downloadUrl[2]?.url);
+        } else if (data?.data[0]?.downloadUrl[1]?.url) {
+            setAudioURL(data?.data[0]?.downloadUrl[1]?.url);
+        } else {
+            setAudioURL(data?.data[0]?.downloadUrl[0]?.url);
+        }
+    }
+
+    function togglePlayPause(e) {
+        e?.stopPropagation();
+        if (playing) {
+            audioRef.current.pause();
+        } else {
+            audioRef.current.play();
+        }
+        setPlaying(!playing);
+    }
+
+    function loopSong(e) {
+        e?.stopPropagation();
+        audioRef.current.loop = !audioRef.current.loop;
+        setIsLooping(!isLooping);
+    }
+
+    function handleSeek(e) {
+        const seekTime = e[0];
+        audioRef.current.currentTime = seekTime;
+        setCurrentTime(seekTime);
+    }
 
     return (
         <main>
@@ -216,11 +219,29 @@ export default function Player() {
                 src={audioURL}
                 ref={audioRef}
             ></audio>
-            <AnimatePresence initial={false} mode="wait">
-                {values.music && (
-                    expanded ? <ExpandedPlayer /> : <MinimizedPlayer />
-                )}
-            </AnimatePresence>
+            {values.music && (
+                expanded ? (
+                    <ExpandedPlayer
+                        data={data}
+                        playing={playing}
+                        togglePlayPause={togglePlayPause}
+                        loopSong={loopSong}
+                        isLooping={isLooping}
+                        handleSeek={handleSeek}
+                        currentTime={currentTime}
+                        duration={duration}
+                        setExpanded={setExpanded}
+                        audioURL={audioURL}
+                    />
+                ) : (
+                    <MinimizedPlayer
+                        data={data}
+                        playing={playing}
+                        togglePlayPause={togglePlayPause}
+                        setExpanded={setExpanded}
+                    />
+                )
+            )}
             <style jsx global>{`
                 .bg-grid-pattern {
                     background-color: #101624;
