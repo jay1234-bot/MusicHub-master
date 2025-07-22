@@ -95,9 +95,9 @@ export default function Player() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
             transition={{ type: "spring", stiffness: 120, damping: 18 }}
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "default" }}
         >
-            <div className="flex items-center gap-3 min-w-0 flex-1" onClick={() => setExpanded(true)}>
+            <div className="flex items-center gap-3 min-w-0 flex-1">
                 {data?.image ? (
                     <img src={data?.image[1]?.url} alt={data?.name} className="rounded-md w-12 h-12 object-cover" />
                 ) : (
@@ -218,7 +218,7 @@ export default function Player() {
             ></audio>
             <AnimatePresence initial={false} mode="wait">
                 {values.music && (
-                    expanded ? <ExpandedPlayer key="expanded" /> : <MinimizedPlayer key="minimized" />
+                    expanded ? <ExpandedPlayer /> : <MinimizedPlayer />
                 )}
             </AnimatePresence>
             <style jsx global>{`
