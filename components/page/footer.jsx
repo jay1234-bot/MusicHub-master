@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { Instagram, Twitter, Github, Send } from "lucide-react";
 import { motion } from "framer-motion";
