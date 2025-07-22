@@ -39,7 +39,8 @@ export default function Player() {
         return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     };
 
-    const togglePlayPause = () => {
+    const togglePlayPause = (e) => {
+        e?.stopPropagation();
         if (playing) {
             audioRef.current.pause();
         } else {
@@ -54,7 +55,8 @@ export default function Player() {
         setCurrentTime(seekTime);
     };
 
-    const loopSong = () => {
+    const loopSong = (e) => {
+        e?.stopPropagation();
         audioRef.current.loop = !audioRef.current.loop;
         setIsLooping(!isLooping);
     };
@@ -89,14 +91,13 @@ export default function Player() {
     const MinimizedPlayer = () => (
         <motion.div
             className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 border-t border-border shadow-lg flex items-center justify-between px-4 py-2 md:px-10"
-            initial={{ y: 80, opacity: 0 }}
+            initial={false}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 80, opacity: 0 }}
             transition={{ type: "spring", stiffness: 120, damping: 18 }}
-            onClick={() => setExpanded(true)}
             style={{ cursor: "pointer" }}
         >
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="flex items-center gap-3 min-w-0 flex-1" onClick={() => setExpanded(true)}>
                 {data?.image ? (
                     <img src={data?.image[1]?.url} alt={data?.name} className="rounded-md w-12 h-12 object-cover" />
                 ) : (
@@ -108,7 +109,7 @@ export default function Player() {
                 </div>
             </div>
             <div className="flex items-center gap-2">
-                <Button size="icon" variant="ghost" className="text-primary" onClick={e => { e.stopPropagation(); togglePlayPause(); }} aria-label={playing ? "Pause" : "Play"}>
+                <Button size="icon" variant="ghost" className="text-primary" onClick={e => togglePlayPause(e)} aria-label={playing ? "Pause" : "Play"}>
                     {playing ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
                 </Button>
                 <Button size="icon" variant="ghost" onClick={e => { e.stopPropagation(); setExpanded(true); }} aria-label="Expand">
@@ -118,15 +119,33 @@ export default function Player() {
         </motion.div>
     );
 
-    // Expanded full-screen player
+    // Expanded full-screen player with animated dark/blue background
     const ExpandedPlayer = () => (
         <motion.div
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-lg"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center"
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 120, damping: 18 }}
         >
+            {/* Animated background */}
+            <motion.div
+                className="absolute inset-0 -z-10"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{
+                    background: "radial-gradient(ellipse at 60% 40%, #1e293b 60%, #0ea5e9 100%)",
+                    backgroundSize: "cover",
+                    animation: "bgMove 8s ease-in-out infinite alternate"
+                }}
+            />
+            <style jsx global>{`
+                @keyframes bgMove {
+                    0% { filter: blur(0px) brightness(1); }
+                    100% { filter: blur(2px) brightness(1.1); }
+                }
+            `}</style>
             <Button size="icon" variant="ghost" className="absolute top-6 left-6 md:top-10 md:left-10" onClick={() => setExpanded(false)} aria-label="Back">
                 <ChevronDown className="h-7 w-7" />
             </Button>
@@ -146,7 +165,7 @@ export default function Player() {
                 <h2 className="text-3xl font-extrabold text-white mb-2 truncate max-w-xs mx-auto">
                     {data?.name || <Skeleton className="h-8 w-40 mx-auto" />}
                 </h2>
-                <p className="text-lg text-gray-300 font-medium truncate max-w-md mx-auto">
+                <p className="text-lg text-blue-300 font-medium truncate max-w-md mx-auto">
                     {data?.artists?.primary?.map(a => a.name).join(", ") || <Skeleton className="h-5 w-32 mx-auto" />}
                 </p>
             </div>
@@ -155,13 +174,13 @@ export default function Player() {
                     <>
                         <Slider
                             thumbClassName="bg-blue-500"
-                            trackClassName="h-2 bg-gray-700"
+                            trackClassName="h-2 bg-blue-900"
                             onValueChange={handleSeek}
                             value={[currentTime]}
                             max={duration}
                             className="w-full"
                         />
-                        <div className="flex justify-between text-white text-sm mt-2">
+                        <div className="flex justify-between text-blue-100 text-sm mt-2">
                             <span>{formatTime(currentTime)}</span>
                             <span>{formatTime(duration)}</span>
                         </div>
@@ -171,16 +190,16 @@ export default function Player() {
                 )}
             </div>
             <div className="flex items-center justify-center gap-6 mt-8">
-                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-white" variant={!isLooping ? "ghost" : "secondary"} onClick={loopSong} aria-label="Loop">
+                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-blue-200" variant={!isLooping ? "ghost" : "secondary"} onClick={e => loopSong(e)} aria-label="Loop">
                     {!isLooping ? <Repeat className="h-6 w-6" /> : <Repeat1 className="h-6 w-6" />}
                 </Button>
-                <Button size="icon" className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white" onClick={togglePlayPause} aria-label={playing ? "Pause" : "Play"}>
+                <Button size="icon" className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white" onClick={e => togglePlayPause(e)} aria-label={playing ? "Pause" : "Play"}>
                     {playing ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
                 </Button>
-                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-white" aria-label="Previous" disabled>
+                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-blue-200" aria-label="Previous" disabled>
                     <SkipBack className="h-6 w-6" />
                 </Button>
-                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-white" aria-label="Download" onClick={() => window.open(audioURL, '_blank')}>
+                <Button size="icon" className="rounded-xl bg-dark-700 hover:bg-dark-600 text-blue-200" aria-label="Download" onClick={e => { e.stopPropagation(); window.open(audioURL, '_blank'); }}>
                     <Download className="h-6 w-6" />
                 </Button>
             </div>
@@ -197,7 +216,7 @@ export default function Player() {
                 src={audioURL}
                 ref={audioRef}
             ></audio>
-            <AnimatePresence>
+            <AnimatePresence initial={false} mode="wait">
                 {values.music && (
                     expanded ? <ExpandedPlayer key="expanded" /> : <MinimizedPlayer key="minimized" />
                 )}
