@@ -4,7 +4,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 relative overflow-hidden",
   {
     variants: {
       variant: {
@@ -60,12 +60,47 @@ const Button = React.forwardRef(
     ref
   ) => {
     const Comp = asChild ? Slot : "button";
+    const [ripple, setRipple] = React.useState(null);
+    const rippleRef = React.useRef();
+
+    function createRipple(e) {
+      const button = e.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+      setRipple({ x, y, size, key: Date.now() });
+      if (props.onClick) props.onClick(e);
+    }
+
+    React.useEffect(() => {
+      if (ripple) {
+        const timeout = setTimeout(() => setRipple(null), 500);
+        return () => clearTimeout(timeout);
+      }
+    }, [ripple]);
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
+        onClick={createRipple}
+        type={props.type || "button"}
       >
+        {ripple && (
+          <span
+            ref={rippleRef}
+            className="absolute pointer-events-none rounded-full bg-blue-400/40 animate-ripple"
+            style={{
+              left: ripple.x,
+              top: ripple.y,
+              width: ripple.size,
+              height: ripple.size,
+              zIndex: 1,
+            }}
+          />
+        )}
         {Icon && iconPlacement === "left" && (
           <div className="w-0 translate-x-[0%] pr-0 opacity-0 transition-all duration-200 group-hover:w-5 group-hover:translate-x-100 group-hover:pr-2 group-hover:opacity-100">
             <Icon />
@@ -84,3 +119,13 @@ const Button = React.forwardRef(
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
+
+// Add ripple animation
+// In your global CSS (e.g., globals.css):
+// .animate-ripple {
+//   animation: ripple 0.5s linear;
+// }
+// @keyframes ripple {
+//   from { transform: scale(0); opacity: 0.7; }
+//   to { transform: scale(2); opacity: 0; }
+// }

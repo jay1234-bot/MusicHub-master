@@ -4,6 +4,7 @@ import { Skeleton } from "../ui/skeleton";
 import { useContext, useEffect } from "react";
 import { MusicContext } from "@/hooks/use-context";
 import { IoPlay } from "react-icons/io5";
+import { motion } from "framer-motion";
 
 export default function SongCard({ title, image, artist, id, desc }) {
     const ids = useContext(MusicContext);
@@ -12,7 +13,12 @@ export default function SongCard({ title, image, artist, id, desc }) {
         localStorage.setItem("last-played", id);
     };
     return (
-        <div className="h-fit w-[200px] transition-transform duration-300 ease-in-out hover:scale-105 group">
+        <motion.div
+            whileHover={{ scale: 1.07, boxShadow: "0 8px 32px 0 rgba(14, 165, 233, 0.15)" }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="h-fit w-[200px] transition-transform duration-300 ease-in-out group bg-background/80 rounded-xl"
+        >
             <div className="overflow-hidden rounded-md">
                 {image ? (
                     <div className="relative" onClick={() => { ids.setMusic(id); setLastPlayed(); }}>
@@ -40,6 +46,6 @@ export default function SongCard({ title, image, artist, id, desc }) {
                     <Skeleton className="w-10 h-2 mt-2" />
                 )}
             </div>
-        </div>
+        </motion.div>
     )
 }

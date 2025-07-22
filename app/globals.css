@@ -97,3 +97,57 @@
     }
   }
 }
+
+.animate-ripple {
+  animation: ripple 0.5s linear;
+}
+@keyframes ripple {
+  from { transform: scale(0); opacity: 0.7; }
+  to { transform: scale(2); opacity: 0; }
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  animation: shimmer 1.2s infinite;
+}
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.slider-animated-range {
+  background: linear-gradient(90deg, #0ea5e9, #6366f1, #0ea5e9);
+  background-size: 200% 100%;
+  animation: slider-gradient-move 2.5s linear infinite;
+}
+@keyframes slider-gradient-move {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.slider-glow-thumb {
+  box-shadow: 0 0 0 0 rgba(14,165,233,0.5), 0 0 8px 2px rgba(99,102,241,0.3);
+  transition: box-shadow 0.2s;
+}
+.slider-glow-thumb:active, .slider-glow-thumb:focus {
+  box-shadow: 0 0 0 4px rgba(14,165,233,0.3), 0 0 12px 4px rgba(99,102,241,0.4);
+}
+
+@keyframes waveform-bar {
+  0%, 100% { height: 30%; }
+  20% { height: 80%; }
+  40% { height: 50%; }
+  60% { height: 90%; }
+  80% { height: 60%; }
+}
+.animate-waveform-bar {
+  animation: waveform-bar 1.2s infinite cubic-bezier(0.4,0,0.2,1);
+}
+.waveform-bars > div {
+  min-height: 0.5rem;
+  max-height: 2.5rem;
+  height: 1.5rem;
+  transition: height 0.2s;
+}

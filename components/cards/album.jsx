@@ -1,10 +1,16 @@
 import Link from "next/link";
 import { Skeleton } from "../ui/skeleton";
 import { Badge } from "../ui/badge";
+import { motion } from "framer-motion";
 
 export default function AlbumCard({ title, image, artist, id, desc, lang }) {
     return (
-        <div className="h-fit w-[200px] transition-transform duration-300 ease-in-out hover:scale-105">
+        <motion.div
+            whileHover={{ scale: 1.07, boxShadow: "0 8px 32px 0 rgba(14, 165, 233, 0.15)" }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="h-fit w-[200px] transition-transform duration-300 ease-in-out bg-background/80 rounded-xl"
+        >
             <div className="overflow-hidden rounded-md">
                 {image ? (
                     <Link href={`/${id}`}>
@@ -34,6 +40,6 @@ export default function AlbumCard({ title, image, artist, id, desc, lang }) {
                     <Skeleton className="w-10 h-2 mt-2" />
                 )}
             </div>
-        </div>
+        </motion.div>
     )
 }
