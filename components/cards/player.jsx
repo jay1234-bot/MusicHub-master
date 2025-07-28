@@ -305,20 +305,20 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
         </Button>
       </motion.div>
 
-      <div className="flex flex-col items-center w-full max-w-2xl">
+      <div className="flex flex-col items-center w-full max-w-2xl px-2 sm:px-4 md:px-8">
         {/* Album Art with Progress Circle */}
         <motion.div
-          className="relative mb-8"
+          className="relative mb-6 sm:mb-8"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ delay: 0.4, duration: 0.8, type: "spring" }}
         >
           {data?.image ? (
-            <div className="relative">
+            <div className="relative w-full flex justify-center">
               <img
                 src={data?.image[2]?.url}
                 alt={data?.name}
-                className="rounded-3xl w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 object-cover shadow-2xl border-4 border-white/20"
+                className="rounded-2xl w-40 h-40 xs:w-48 xs:h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 object-cover shadow-2xl border-4 border-white/20 max-w-full"
                 style={{ 
                   boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
                   filter: "drop-shadow(0 0 20px rgba(147, 51, 234, 0.3))"
@@ -326,7 +326,7 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
               />
               {playing && (
                 <motion.div
-                  className="absolute inset-0 rounded-3xl bg-purple-500/20 flex items-center justify-center"
+                  className="absolute inset-0 rounded-2xl bg-purple-500/20 flex items-center justify-center"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -338,44 +338,43 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
                   />
                 </motion.div>
               )}
-              
               {/* Progress Circle Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <ProgressCircle currentTime={currentTime} duration={duration} size={120} />
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <ProgressCircle currentTime={currentTime} duration={duration} size={100} />
               </div>
             </div>
           ) : (
-            <Skeleton className="rounded-3xl w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80" />
+            <Skeleton className="rounded-2xl w-40 h-40 xs:w-48 xs:h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 max-w-full" />
           )}
         </motion.div>
 
         {/* Song Info */}
         <motion.div 
-          className="text-center w-full mb-8"
+          className="text-center w-full mb-6 sm:mb-8 px-2"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3 truncate max-w-xs mx-auto">
-            {data?.name || <Skeleton className="h-10 w-40 mx-auto" />}
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 truncate max-w-full">
+            {data?.name || <Skeleton className="h-8 w-32 mx-auto" />}
           </h2>
-          <p className="text-lg sm:text-xl text-blue-200 font-medium truncate max-w-md mx-auto">
-            {data?.artists?.primary?.map(a => a.name).join(", ") || <Skeleton className="h-6 w-32 mx-auto" />}
+          <p className="text-base sm:text-lg text-blue-200 font-medium truncate max-w-full">
+            {data?.artists?.primary?.map(a => a.name).join(", ") || <Skeleton className="h-5 w-20 mx-auto" />}
           </p>
         </motion.div>
 
-        {/* Optimized Waveform */}
+        {/* Optimized Waveform (fewer bars on mobile) */}
         <motion.div
-          className="w-full max-w-md mb-8"
+          className="w-full max-w-xs sm:max-w-md mb-6 sm:mb-8"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.8 }}
         >
-          <Waveform playing={playing} currentTime={currentTime} duration={duration} />
+          <Waveform playing={playing} currentTime={currentTime} duration={duration} barCount={window.innerWidth < 640 ? 12 : 30} />
         </motion.div>
 
         {/* Progress Bar */}
-        <div className="w-full max-w-xl mb-8 px-4">
+        <div className="w-full max-w-xl mb-6 sm:mb-8 px-2 sm:px-4">
           {duration ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -390,7 +389,7 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
                 max={duration}
                 className="w-full"
               />
-              <div className="flex justify-between text-blue-100 text-sm mt-3">
+              <div className="flex justify-between text-blue-100 text-xs sm:text-sm mt-2">
                 <span>{formatTime(currentTime)}</span>
                 <span>{formatTime(duration)}</span>
               </div>
@@ -402,7 +401,7 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
 
         {/* Control Buttons */}
         <motion.div 
-          className="flex items-center justify-center gap-4 sm:gap-6 w-full"
+          className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 w-full"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2 }}
@@ -477,7 +476,7 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
 
         {/* Additional Controls */}
         <motion.div 
-          className="flex items-center justify-center gap-4 mt-6"
+          className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.4 }}
