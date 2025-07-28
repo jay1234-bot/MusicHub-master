@@ -6,14 +6,14 @@ import { getSongsByQuery } from "@/lib/fetch";
 import { useEffect, useState } from "react";
 import ErrorMessage from "@/components/ui/error-message";
 import { motion, AnimatePresence } from "framer-motion";
-import { Music, Heart, Zap, Moon, Coffee } from "lucide-react";
+import { Music, Heart, Zap, Moon, Coffee, TrendingUp, Sparkles } from "lucide-react";
 
 const SECTIONS = [
   { 
     key: "trending", 
     title: "🔥 Trending", 
     desc: "Trending songs in India",
-    icon: Zap,
+    icon: TrendingUp,
     gradient: "from-orange-500 to-red-500",
     bgGradient: "from-orange-500/10 to-red-500/10"
   },
@@ -158,6 +158,22 @@ export default function Page() {
           }}
         >
           <Heart size={20} />
+        </motion.div>
+
+        <motion.div
+          className="absolute top-60 left-20 text-blue-400/30"
+          animate={{ 
+            y: [0, -15, 0],
+            rotate: [0, -10, 10, 0]
+          }}
+          transition={{ 
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2
+          }}
+        >
+          <Sparkles size={18} />
         </motion.div>
 
         <div className="relative z-10 text-center">

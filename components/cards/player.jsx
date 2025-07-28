@@ -1,7 +1,7 @@
 "use client";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
-import { Repeat, Repeat1, Play, Pause, Download, SkipBack, SkipForward, ChevronDown, Maximize2, Heart, Share2, Volume2, VolumeX } from "lucide-react";
+import { Repeat, Repeat1, Play, Pause, Download, SkipBack, SkipForward, ChevronDown, Maximize2, Heart, Share2, Volume2, VolumeX, Shuffle } from "lucide-react";
 import { Slider } from "../ui/slider";
 import { getSongsById } from "@/lib/fetch";
 import { MusicContext } from "@/hooks/use-context";
@@ -9,21 +9,21 @@ import { Skeleton } from "../ui/skeleton";
 import { useMusic } from "../music-provider";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Waveform Component
+// Optimized Waveform Component
 function Waveform({ playing, currentTime, duration }) {
-  const bars = Array.from({ length: 50 }, (_, i) => i);
+  const bars = Array.from({ length: 30 }, (_, i) => i);
   
   return (
-    <div className="flex items-end justify-center gap-1 h-16">
+    <div className="flex items-end justify-center gap-0.5 h-12">
       {bars.map((bar, index) => {
         const progress = currentTime / duration;
         const barProgress = (index / bars.length) - progress;
-        const height = Math.max(0.2, Math.random() * 0.8 + (playing ? 0.2 : 0));
+        const height = Math.max(0.3, Math.random() * 0.7 + (playing ? 0.3 : 0));
         
         return (
           <motion.div
             key={index}
-            className={`w-1 rounded-full ${
+            className={`w-0.5 rounded-full ${
               barProgress < 0.1 ? 'bg-gradient-to-t from-purple-500 to-pink-500' : 
               'bg-gradient-to-t from-slate-400 to-slate-600'
             }`}
@@ -32,9 +32,9 @@ function Waveform({ playing, currentTime, duration }) {
               height: playing ? [`${height * 100}%`, `${(height + 0.1) * 100}%`, `${height * 100}%`] : `${height * 100}%`
             }}
             transition={{
-              duration: 0.5,
+              duration: 0.8,
               repeat: playing ? Infinity : 0,
-              delay: index * 0.02,
+              delay: index * 0.03,
               ease: "easeInOut"
             }}
           />
@@ -44,19 +44,66 @@ function Waveform({ playing, currentTime, duration }) {
   );
 }
 
+// Progress Circle Component
+function ProgressCircle({ currentTime, duration, size = 120 }) {
+  const radius = (size - 10) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const progress = currentTime / duration;
+  const strokeDasharray = circumference;
+  const strokeDashoffset = circumference - (progress * circumference);
+
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg className="transform -rotate-90" width={size} height={size}>
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="rgba(255, 255, 255, 0.1)"
+          strokeWidth="4"
+          fill="transparent"
+        />
+        <motion.circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="url(#gradient)"
+          strokeWidth="4"
+          fill="transparent"
+          strokeDasharray={strokeDasharray}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        />
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#8b5cf6" />
+            <stop offset="50%" stopColor="#ec4899" />
+            <stop offset="100%" stopColor="#3b82f6" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="text-white font-bold text-lg">
+          {Math.round(progress * 100)}%
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function MinimizedPlayer({ data, playing, togglePlayPause, setExpanded }) {
   return (
     <motion.div
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-white/20 dark:border-slate-700/30 shadow-2xl"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-white/20 dark:border-slate-700/30 shadow-2xl"
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 100, opacity: 0 }}
       transition={{ type: "spring", stiffness: 120, damping: 18 }}
       style={{ cursor: "default" }}
     >
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-pink-500/5 to-blue-500/5 opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
-      
       <div className="relative flex items-center justify-between px-4 py-3 md:px-10">
         <div className="flex items-center gap-4 min-w-0 flex-1">
           {data?.image ? (
@@ -171,6 +218,22 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
   const [isLiked, setIsLiked] = useState(false);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
+  const [backgroundIndex, setBackgroundIndex] = useState(0);
+
+  const backgrounds = [
+    "radial-gradient(ellipse at 60% 40%, #1e293b 60%, #0ea5e9 100%)",
+    "radial-gradient(ellipse at 40% 60%, #1e293b 60%, #ec4899 100%)",
+    "radial-gradient(ellipse at 20% 80%, #1e293b 60%, #8b5cf6 100%)",
+    "radial-gradient(ellipse at 80% 20%, #1e293b 60%, #f59e0b 100%)",
+    "radial-gradient(ellipse at 50% 50%, #1e293b 60%, #10b981 100%)"
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBackgroundIndex((prev) => (prev + 1) % backgrounds.length);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <motion.div
@@ -180,49 +243,45 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ type: "spring", stiffness: 120, damping: 18 }}
     >
-      {/* Animated background */}
+      {/* Dynamic Animated Background */}
       <motion.div
         className="absolute inset-0 -z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         style={{
-          background: "radial-gradient(ellipse at 60% 40%, #1e293b 60%, #0ea5e9 100%)",
+          background: backgrounds[backgroundIndex],
           backgroundSize: "cover",
         }}
       >
         <motion.div
           className="absolute inset-0"
           animate={{ 
-            background: [
-              "radial-gradient(ellipse at 60% 40%, #1e293b 60%, #0ea5e9 100%)",
-              "radial-gradient(ellipse at 40% 60%, #1e293b 60%, #ec4899 100%)",
-              "radial-gradient(ellipse at 60% 40%, #1e293b 60%, #0ea5e9 100%)"
-            ]
+            background: backgrounds
           }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
       </motion.div>
 
-      {/* Floating particles */}
+      {/* Optimized Floating Particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {Array.from({ length: 15 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-white/20 rounded-full"
+            className="absolute w-1 h-1 bg-white/10 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
             animate={{
-              y: [0, -100, 0],
+              y: [0, -50, 0],
               opacity: [0, 1, 0],
               scale: [0, 1, 0]
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 4 + Math.random() * 2,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: Math.random() * 3,
               ease: "easeInOut"
             }}
           />
@@ -247,7 +306,7 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
       </motion.div>
 
       <div className="flex flex-col items-center w-full max-w-2xl">
-        {/* Album Art */}
+        {/* Album Art with Progress Circle */}
         <motion.div
           className="relative mb-8"
           initial={{ scale: 0, rotate: -180 }}
@@ -279,6 +338,11 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
                   />
                 </motion.div>
               )}
+              
+              {/* Progress Circle Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <ProgressCircle currentTime={currentTime} duration={duration} size={120} />
+              </div>
             </div>
           ) : (
             <Skeleton className="rounded-3xl w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80" />
@@ -300,7 +364,7 @@ function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, h
           </p>
         </motion.div>
 
-        {/* Waveform */}
+        {/* Optimized Waveform */}
         <motion.div
           className="w-full max-w-md mb-8"
           initial={{ opacity: 0, scale: 0.8 }}
