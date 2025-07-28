@@ -64,7 +64,7 @@ export default function Search() {
                 <form onSubmit={handleSubmit} className="relative">
                     {/* Animated Background */}
                     <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 rounded-2xl blur-xl"
+                        className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 rounded-2xl blur-xl z-0"
                         animate={{
                             scale: isFocused ? 1.05 : 1,
                             opacity: isFocused ? 0.8 : 0.3
@@ -74,7 +74,7 @@ export default function Search() {
                     
                     {/* Search Input Container */}
                     <motion.div
-                        className="relative flex items-center bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-white/30 dark:border-slate-700/30 rounded-2xl shadow-lg overflow-hidden"
+                        className="relative flex items-center bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-white/30 dark:border-slate-700/30 rounded-2xl shadow-lg overflow-hidden z-10"
                         animate={{
                             scale: isFocused ? 1.02 : 1,
                             boxShadow: isFocused 
