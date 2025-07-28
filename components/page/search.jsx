@@ -74,7 +74,7 @@ export default function Search() {
                     
                     {/* Search Input Container */}
                     <motion.div
-                        className="relative flex items-center bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-white/30 dark:border-slate-700/30 rounded-2xl shadow-lg"
+                        className="relative flex items-center bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-white/30 dark:border-slate-700/30 rounded-2xl shadow-lg overflow-hidden"
                         animate={{
                             scale: isFocused ? 1.02 : 1,
                             boxShadow: isFocused 
@@ -85,7 +85,7 @@ export default function Search() {
                     >
                         {/* Left Icon */}
                         <motion.div
-                            className="pl-4 pr-2"
+                            className="pl-4 pr-2 flex-shrink-0"
                             animate={{ 
                                 rotate: isSearching ? 360 : 0,
                                 scale: isFocused ? 1.1 : 1
@@ -100,24 +100,26 @@ export default function Search() {
                         </motion.div>
 
                         {/* Input Field */}
-                        <Input 
-                            ref={inpRef}
-                            value={query} 
-                            onChange={(e) => setQuery(e.target.value)}
-                            onFocus={() => setIsFocused(true)}
-                            onBlur={() => {
-                                setIsFocused(false);
-                                setTimeout(() => setShowSuggestions(false), 200);
-                            }}
-                            autoComplete="off" 
-                            type="search" 
-                            className="flex-1 bg-transparent border-none focus:ring-0 text-lg placeholder:text-slate-500 dark:placeholder:text-slate-400" 
-                            name="query" 
-                            placeholder="Search for amazing music..." 
-                        />
+                        <div className="flex-1 min-w-0">
+                            <input
+                                ref={inpRef}
+                                value={query} 
+                                onChange={(e) => setQuery(e.target.value)}
+                                onFocus={() => setIsFocused(true)}
+                                onBlur={() => {
+                                    setIsFocused(false);
+                                    setTimeout(() => setShowSuggestions(false), 200);
+                                }}
+                                autoComplete="off" 
+                                type="search" 
+                                className="w-full bg-transparent border-none outline-none text-lg placeholder:text-slate-500 dark:placeholder:text-slate-400 text-slate-800 dark:text-slate-200 py-3 px-2" 
+                                name="query" 
+                                placeholder="Search for amazing music..." 
+                            />
+                        </div>
 
                         {/* Right Icons */}
-                        <div className="flex items-center gap-2 pr-4">
+                        <div className="flex items-center gap-2 pr-4 flex-shrink-0">
                             {/* Voice Search Button */}
                             <motion.div
                                 whileHover={{ scale: 1.1 }}
