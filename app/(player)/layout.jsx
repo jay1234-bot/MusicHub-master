@@ -1,6 +1,7 @@
 import NextProvider from "@/components/next-provider";
 import Footer from "@/components/page/footer";
 import Header from "@/components/page/header";
+import FloatingPlayer from "@/components/ui/floating-player";
 
 export default function RootLayout({ children }) {
     return (
@@ -12,6 +13,7 @@ export default function RootLayout({ children }) {
                 </NextProvider>
             </div>
             <Footer />
+            <FloatingPlayer />
         </main>
     )
 }

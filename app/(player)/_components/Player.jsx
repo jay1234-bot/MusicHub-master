@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/credenza"
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
+import AudioVisualizer from "@/components/ui/audio-visualizer";
 
 export default function Player({ id }) {
     const [data, setData] = useState([]);
@@ -252,6 +253,11 @@ export default function Player({ id }) {
                                             {data.artists.primary[0]?.name || "unknown"}
                                         </Link>
                                     </p>
+                                </div>
+
+                                {/* Audio Visualizer */}
+                                <div className="hidden md:block">
+                                    <AudioVisualizer isPlaying={playing} audioRef={audioRef} />
                                 </div>
 
                                 {/* Player Controls */}

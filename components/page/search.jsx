@@ -3,7 +3,7 @@ import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { SearchIcon, Mic, Sparkles, Music, TrendingUp, Heart } from "lucide-react";
+import { SearchIcon, Mic, MicOff, Sparkles, Music, TrendingUp, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Search() {
@@ -11,8 +11,10 @@ export default function Search() {
     const [isFocused, setIsFocused] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
+    const [isListening, setIsListening] = useState(false);
     const linkRef = useRef();
     const inpRef = useRef();
+    const recognitionRef = useRef(null);
 
     const suggestions = [
         "Trending songs",
@@ -25,18 +27,56 @@ export default function Search() {
         "Classical ragas"
     ];
 
+    // Initialize speech recognition
+    useEffect(() => {
+        if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
+            recognitionRef.current = new window.webkitSpeechRecognition();
+            recognitionRef.current.continuous = false;
+            recognitionRef.current.interimResults = false;
+            recognitionRef.current.lang = 'en-US';
+
+            recognitionRef.current.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                setQuery(transcript);
+                setIsListening(false);
+                handleSearch(transcript);
+            };
+
+            recognitionRef.current.onerror = () => {
+                setIsListening(false);
+            };
+        }
+    }, []);
+
+    const startListening = () => {
+        if (recognitionRef.current) {
+            setIsListening(true);
+            recognitionRef.current.start();
+        }
+    };
+
+    const stopListening = () => {
+        if (recognitionRef.current) {
+            setIsListening(false);
+            recognitionRef.current.stop();
+        }
+    };
+
+    const handleSearch = (searchQuery = query) => {
+        if (searchQuery.trim()) {
+            setIsSearching(true);
+            setTimeout(() => {
+                linkRef.current.click();
+                inpRef.current.blur();
+                setQuery("");
+                setIsSearching(false);
+            }, 500);
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!query.trim()) {
-            return;
-        }
-        setIsSearching(true);
-        setTimeout(() => {
-            linkRef.current.click();
-            inpRef.current.blur();
-            setQuery("");
-            setIsSearching(false);
-        }, 500);
+        handleSearch();
     };
 
     const handleSuggestionClick = (suggestion) => {
@@ -129,9 +169,14 @@ export default function Search() {
                                     type="button"
                                     variant="ghost" 
                                     size="icon" 
-                                    className="w-8 h-8 rounded-full bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400"
+                                    onClick={isListening ? stopListening : startListening}
+                                    className={`w-8 h-8 rounded-full transition-all ${
+                                        isListening 
+                                            ? 'bg-red-500 text-white animate-pulse' 
+                                            : 'bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400'
+                                    }`}
                                 >
-                                    <Mic className="w-4 h-4" />
+                                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
                                 </Button>
                             </motion.div>
 

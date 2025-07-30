@@ -18,9 +18,9 @@ const footerLinks = [
 ];
 
 const contactInfo = [
-  { icon: Mail, text: "support@musichub.com", href: "mailto:support@musichub.com" },
-  { icon: Phone, text: "+1 (555) 123-4567", href: "tel:+15551234567" },
-  { icon: MapPin, text: "Music Street, Melody City", href: "#" },
+  { icon: Mail, text: "krishan432@fearlessmails.com", href: "mailto:krishan432@fearlessmails.com" },
+  { icon: Phone, text: "Nhi Dunga", href: "#" },
+  { icon: MapPin, text: "Aapke Dil me", href: "#" },
 ];
 
 export default function Footer() {
