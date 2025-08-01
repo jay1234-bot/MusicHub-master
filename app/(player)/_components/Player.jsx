@@ -171,17 +171,17 @@ export default function Player({ id }) {
     }, [audioError]);
 
     return (
-        <div className="min-h-screen w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 2xl:px-16">
+        <div className="h-screen w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 2xl:px-16 flex flex-col">
             <audio 
                 ref={audioRef}
                 preload="metadata"
             />
             
-            <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 pt-4 sm:pt-6 lg:pt-8 pb-20 sm:pb-24 lg:pb-28">
+            <div className="flex-1 flex flex-col justify-center gap-4 sm:gap-6 lg:gap-8 py-4 sm:py-6 lg:py-8">
                 {/* Main Player Content */}
-                <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 w-full">
+                <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 w-full items-center lg:items-start">
                     {/* Album Art Section - Responsive */}
-                    <div className="flex justify-center lg:justify-start">
+                    <div className="flex justify-center lg:justify-start flex-shrink-0">
                         {isLoading || data.length <= 0 ? (
                             <Skeleton className="w-[200px] h-[200px] sm:w-[250px] sm:h-[250px] md:w-[280px] md:h-[280px] lg:w-[300px] lg:h-[300px] xl:w-[350px] xl:h-[350px] 2xl:w-[400px] 2xl:h-[400px] aspect-square rounded-2xl" />
                         ) : (
@@ -203,9 +203,9 @@ export default function Player({ id }) {
                     </div>
 
                     {/* Song Info and Controls Section - Responsive */}
-                    <div className="flex flex-col justify-between w-full max-w-full lg:max-w-2xl mx-auto lg:mx-0 min-h-0">
+                    <div className="flex flex-col justify-center w-full max-w-full lg:max-w-2xl mx-auto lg:mx-0 min-h-0 flex-1">
                         {isLoading || data.length <= 0 ? (
-                            <div className="flex flex-col justify-between w-full space-y-4 sm:space-y-6">
+                            <div className="flex flex-col justify-center w-full space-y-4 sm:space-y-6">
                                 <div className="space-y-3 sm:space-y-4">
                                     <Skeleton className="h-6 sm:h-8 w-48 sm:w-64 lg:w-80" />
                                     <Skeleton className="h-4 sm:h-6 w-24 sm:w-32" />
@@ -226,7 +226,7 @@ export default function Player({ id }) {
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex flex-col justify-between w-full space-y-4 sm:space-y-6 lg:space-y-8 min-h-0">
+                            <div className="flex flex-col justify-center w-full space-y-4 sm:space-y-6 lg:space-y-8 min-h-0">
                                 {/* Song Info - Responsive Typography */}
                                 <div className="text-center lg:text-left animate-fade-in-scale">
                                     <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight break-words">
