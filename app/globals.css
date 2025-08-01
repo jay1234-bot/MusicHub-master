@@ -65,6 +65,11 @@
   }
   body {
     @apply bg-background text-foreground select-none;
+    /* Prevent horizontal scroll on mobile */
+    overflow-x: hidden;
+    /* Better text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   ::-webkit-scrollbar{
     @apply w-0 h-0;
@@ -352,17 +357,6 @@
   background-size: 20px 20px;
 }
 
-/* Responsive Animations */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
 /* Enhanced Player Responsive Styles */
 @media (min-width: 1536px) {
   .player-container {
@@ -544,5 +538,102 @@
 @container (min-width: 600px) {
   .container-responsive {
     grid-template-columns: 1fr 2fr;
+  }
+}
+
+/* Mobile-First Responsive Improvements */
+@media (max-width: 640px) {
+  /* Prevent text overflow on small screens */
+  .text-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Better touch targets */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improved spacing for mobile */
+  .mobile-spacing {
+    padding: 0.75rem;
+    margin: 0.5rem;
+  }
+  
+  /* Better button sizing for mobile */
+  .mobile-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Tablet Optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-optimized {
+    padding: 1rem 1.5rem;
+  }
+  
+  .tablet-text {
+    font-size: 1.125rem;
+  }
+}
+
+/* Desktop Enhancements */
+@media (min-width: 1025px) {
+  .desktop-enhanced {
+    padding: 1.5rem 2rem;
+  }
+  
+  .desktop-text {
+    font-size: 1.25rem;
+  }
+}
+
+/* Ultra-wide Screen Support */
+@media (min-width: 1920px) {
+  .ultra-wide {
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+}
+
+/* High DPI Display Support */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .high-dpi {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark Mode Optimizations */
+@media (prefers-color-scheme: dark) {
+  .dark-optimized {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-optimized {
+    background: white !important;
+    color: black !important;
   }
 }

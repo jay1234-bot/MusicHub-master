@@ -170,40 +170,28 @@ export default function Player({ id }) {
         }
     }, [audioError]);
 
-    // Memoized image size for responsive design
-    const imageSize = useMemo(() => {
-        if (typeof window !== 'undefined') {
-            const width = window.innerWidth;
-            if (width >= 1536) return 'w-[400px] h-[400px]'; // 2xl
-            if (width >= 1280) return 'w-[350px] h-[350px]'; // xl
-            if (width >= 1024) return 'w-[300px] h-[300px]'; // lg
-            if (width >= 768) return 'w-[280px] h-[280px]'; // md
-            return 'w-[250px] h-[250px]'; // sm and below
-        }
-        return 'w-[250px] h-[250px]';
-    }, []);
-
     return (
-        <div className="mb-3 mt-10 max-w-7xl mx-auto">
+        <div className="min-h-screen w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 2xl:px-16">
             <audio 
                 ref={audioRef}
                 preload="metadata"
             />
             
-            <div className="grid gap-6 w-full">
-                <div className="flex flex-col lg:flex-row gap-8 w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
-                    {/* Album Art Section */}
+            <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 pt-4 sm:pt-6 lg:pt-8 pb-20 sm:pb-24 lg:pb-28">
+                {/* Main Player Content */}
+                <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 w-full">
+                    {/* Album Art Section - Responsive */}
                     <div className="flex justify-center lg:justify-start">
                         {isLoading || data.length <= 0 ? (
-                            <Skeleton className={`${imageSize} aspect-square rounded-2xl`} />
+                            <Skeleton className="w-[200px] h-[200px] sm:w-[250px] sm:h-[250px] md:w-[280px] md:h-[280px] lg:w-[300px] lg:h-[300px] xl:w-[350px] xl:h-[350px] 2xl:w-[400px] 2xl:h-[400px] aspect-square rounded-2xl" />
                         ) : (
                             <div className="relative group">
                                 <div className="relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
                                     <img 
                                         src={data.image[2].url} 
-                                        className={`${imageSize} aspect-square object-cover transition-all duration-500 ${
+                                        className="w-[200px] h-[200px] sm:w-[250px] sm:h-[250px] md:w-[280px] md:h-[280px] lg:w-[300px] lg:h-[300px] xl:w-[350px] xl:h-[350px] 2xl:w-[400px] 2xl:h-[400px] aspect-square object-cover transition-all duration-500 ${
                                             playing ? 'animate-spin-slow' : ''
-                                        }`}
+                                        }"
                                         alt={data.name}
                                         loading="eager"
                                     />
@@ -214,37 +202,37 @@ export default function Player({ id }) {
                         )}
                     </div>
 
-                    {/* Song Info and Controls Section */}
-                    <div className="flex flex-col justify-between w-full max-w-2xl mx-auto lg:mx-0">
+                    {/* Song Info and Controls Section - Responsive */}
+                    <div className="flex flex-col justify-between w-full max-w-full lg:max-w-2xl mx-auto lg:mx-0 min-h-0">
                         {isLoading || data.length <= 0 ? (
-                            <div className="flex flex-col justify-between w-full space-y-6">
-                                <div className="space-y-4">
-                                    <Skeleton className="h-8 w-64 lg:w-80" />
-                                    <Skeleton className="h-6 w-32" />
+                            <div className="flex flex-col justify-between w-full space-y-4 sm:space-y-6">
+                                <div className="space-y-3 sm:space-y-4">
+                                    <Skeleton className="h-6 sm:h-8 w-48 sm:w-64 lg:w-80" />
+                                    <Skeleton className="h-4 sm:h-6 w-24 sm:w-32" />
                                 </div>
-                                <div className="space-y-4">
-                                    <Skeleton className="h-4 w-full rounded-full" />
+                                <div className="space-y-3 sm:space-y-4">
+                                    <Skeleton className="h-3 sm:h-4 w-full rounded-full" />
                                     <div className="flex justify-between">
-                                        <Skeleton className="h-4 w-12" />
-                                        <Skeleton className="h-4 w-12" />
+                                        <Skeleton className="h-3 sm:h-4 w-8 sm:w-12" />
+                                        <Skeleton className="h-3 sm:h-4 w-8 sm:w-12" />
                                     </div>
-                                    <div className="flex items-center justify-center lg:justify-start gap-4">
-                                        <Skeleton className="h-12 w-12 rounded-full" />
-                                        <Skeleton className="h-10 w-10 rounded-full" />
-                                        <Skeleton className="h-10 w-10 rounded-full" />
-                                        <Skeleton className="h-10 w-10 rounded-full" />
-                                        <Skeleton className="h-10 w-10 rounded-full" />
+                                    <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-4">
+                                        <Skeleton className="h-8 sm:h-12 w-8 sm:w-12 rounded-full" />
+                                        <Skeleton className="h-6 sm:h-10 w-6 sm:w-10 rounded-full" />
+                                        <Skeleton className="h-6 sm:h-10 w-6 sm:w-10 rounded-full" />
+                                        <Skeleton className="h-6 sm:h-10 w-6 sm:w-10 rounded-full" />
+                                        <Skeleton className="h-6 sm:h-10 w-6 sm:w-10 rounded-full" />
                                     </div>
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex flex-col justify-between w-full space-y-6 lg:space-y-8">
-                                {/* Song Info */}
+                            <div className="flex flex-col justify-between w-full space-y-4 sm:space-y-6 lg:space-y-8 min-h-0">
+                                {/* Song Info - Responsive Typography */}
                                 <div className="text-center lg:text-left animate-fade-in-scale">
-                                    <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight">
+                                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight break-words">
                                         {data.name}
                                     </h1>
-                                    <p className="text-lg lg:text-xl text-muted-foreground mt-2 lg:mt-3">
+                                    <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground mt-1 sm:mt-2 lg:mt-3 break-words">
                                         by{' '}
                                         <Link 
                                             href={"/search/" + `${encodeURI(data.artists.primary[0].name.toLowerCase().split(" ").join("+"))}`} 
@@ -255,15 +243,15 @@ export default function Player({ id }) {
                                     </p>
                                 </div>
 
-                                {/* Audio Visualizer */}
+                                {/* Audio Visualizer - Hidden on small screens */}
                                 <div className="hidden md:block">
                                     <AudioVisualizer isPlaying={playing} audioRef={audioRef} />
                                 </div>
 
-                                {/* Player Controls */}
-                                <div className="space-y-6">
+                                {/* Player Controls - Responsive */}
+                                <div className="space-y-4 sm:space-y-6">
                                     {/* Progress Bar */}
-                                    <div className="space-y-3">
+                                    <div className="space-y-2 sm:space-y-3">
                                         <Slider 
                                             onValueChange={handleSeek} 
                                             value={[currentTime]} 
@@ -272,47 +260,49 @@ export default function Player({ id }) {
                                             thumbClassName="slider-glow-thumb"
                                             trackClassName="slider-animated-range"
                                         />
-                                        <div className="flex justify-between text-sm text-muted-foreground">
+                                        <div className="flex justify-between text-xs sm:text-sm text-muted-foreground">
                                             <span>{formatTime(currentTime)}</span>
                                             <span>{formatTime(duration)}</span>
                                         </div>
                                     </div>
 
-                                    {/* Control Buttons */}
-                                    <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 lg:gap-6">
+                                    {/* Control Buttons - Responsive Layout */}
+                                    <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 lg:gap-6">
+                                        {/* Main Play Button */}
                                         <Button 
                                             variant={playing ? "default" : "secondary"} 
-                                            className="gap-2 rounded-full px-8 py-6 text-lg font-medium hover:scale-105 transition-all duration-200 hover-glow"
+                                            className="gap-1 sm:gap-2 rounded-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 text-sm sm:text-base lg:text-lg font-medium hover:scale-105 transition-all duration-200 hover-glow w-full sm:w-auto"
                                             onClick={togglePlayPause}
                                         >
                                             {playing ? (
-                                                <IoPause className="h-5 w-5" />
+                                                <IoPause className="h-4 w-4 sm:h-5 sm:w-5" />
                                             ) : (
-                                                <Play className="h-5 w-5" />
+                                                <Play className="h-4 w-4 sm:h-5 sm:w-5" />
                                             )}
                                             {playing ? "Pause" : "Play"}
                                         </Button>
                                         
-                                        <div className="flex items-center gap-3 lg:gap-4">
+                                        {/* Secondary Controls */}
+                                        <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3 lg:gap-4 w-full sm:w-auto">
                                             <Button 
                                                 size="icon" 
                                                 variant="ghost" 
                                                 onClick={loopSong}
-                                                className="h-12 w-12 rounded-full hover:bg-purple-500/10 hover:text-purple-500 transition-all duration-200"
+                                                className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 rounded-full hover:bg-purple-500/10 hover:text-purple-500 transition-all duration-200"
                                             >
-                                                {!isLooping ? <Repeat className="h-5 w-5" /> : <Repeat1 className="h-5 w-5" />}
+                                                {!isLooping ? <Repeat className="h-4 w-4 sm:h-5 sm:w-5" /> : <Repeat1 className="h-4 w-4 sm:h-5 sm:w-5" />}
                                             </Button>
                                             
                                             <Button 
                                                 size="icon" 
                                                 variant="ghost" 
                                                 onClick={downloadSong}
-                                                className="h-12 w-12 rounded-full hover:bg-green-500/10 hover:text-green-500 transition-all duration-200"
+                                                className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 rounded-full hover:bg-green-500/10 hover:text-green-500 transition-all duration-200"
                                             >
                                                 {isDownloading ? (
-                                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                                    <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                                                 ) : (
-                                                    <Download className="h-5 w-5" />
+                                                    <Download className="h-4 w-4 sm:h-5 sm:w-5" />
                                                 )}
                                             </Button>
                                             
@@ -320,9 +310,9 @@ export default function Player({ id }) {
                                                 size="icon" 
                                                 variant="ghost" 
                                                 onClick={handleShare}
-                                                className="h-12 w-12 rounded-full hover:bg-blue-500/10 hover:text-blue-500 transition-all duration-200"
+                                                className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 rounded-full hover:bg-blue-500/10 hover:text-blue-500 transition-all duration-200"
                                             >
-                                                <Share2 className="h-5 w-5" />
+                                                <Share2 className="h-4 w-4 sm:h-5 sm:w-5" />
                                             </Button>
                                             
                                             <Credenza>
@@ -331,23 +321,23 @@ export default function Player({ id }) {
                                                         size="icon" 
                                                         variant="ghost" 
                                                         onClick={getLyrics}
-                                                        className="h-12 w-12 rounded-full hover:bg-pink-500/10 hover:text-pink-500 transition-all duration-200"
+                                                        className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 rounded-full hover:bg-pink-500/10 hover:text-pink-500 transition-all duration-200"
                                                     >
-                                                        <Music2 className="h-5 w-5" />
+                                                        <Music2 className="h-4 w-4 sm:h-5 sm:w-5" />
                                                     </Button>
                                                 </CredenzaTrigger>
-                                                <CredenzaContent className="max-w-2xl">
+                                                <CredenzaContent className="max-w-2xl w-[90vw] sm:w-auto">
                                                     <CredenzaHeader>
-                                                        <CredenzaTitle className="text-xl font-bold">
+                                                        <CredenzaTitle className="text-lg sm:text-xl font-bold">
                                                             {data.name} - Lyrics
                                                         </CredenzaTitle>
                                                     </CredenzaHeader>
                                                     <CredenzaBody>
-                                                        <ScrollArea className="h-80 custom-scrollbar">
+                                                        <ScrollArea className="h-60 sm:h-80 custom-scrollbar">
                                                             {lyrics ? (
                                                                 <div 
                                                                     dangerouslySetInnerHTML={{ __html: lyrics.replace(/\n/g, '<br />') }} 
-                                                                    className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                                                                    className="text-muted-foreground leading-relaxed prose prose-sm max-w-none text-sm sm:text-base"
                                                                 />
                                                             ) : (
                                                                 <div className="grid gap-3">
@@ -370,9 +360,9 @@ export default function Player({ id }) {
                 </div>
             </div>
 
-            {/* Next Song Recommendation */}
+            {/* Next Song Recommendation - Responsive */}
             {next.nextData && (
-                <div className="mt-10 -mb-3 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
+                <div className="px-2 sm:px-4 md:px-6 lg:px-8 xl:px-12 2xl:px-16 pb-4 sm:pb-6 lg:pb-8">
                     <Next 
                         name={next.nextData.name} 
                         artist={next.nextData.artist} 

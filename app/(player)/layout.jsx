@@ -5,9 +5,9 @@ import FloatingPlayer from "@/components/ui/floating-player";
 
 export default function RootLayout({ children }) {
     return (
-        <main className="min-h-screen bg-background">
+        <main className="min-h-screen bg-background flex flex-col">
             <Header />
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
+            <div className="flex-1 w-full max-w-full overflow-hidden">
                 <NextProvider>
                     {children}
                 </NextProvider>
