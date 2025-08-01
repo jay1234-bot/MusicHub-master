@@ -64,13 +64,13 @@ export default function Search() {
 
     const handleSearch = (searchQuery = query) => {
         if (searchQuery.trim()) {
-            setIsSearching(true);
-            setTimeout(() => {
-                linkRef.current.click();
-                inpRef.current.blur();
-                setQuery("");
-                setIsSearching(false);
-            }, 500);
+        setIsSearching(true);
+        setTimeout(() => {
+            linkRef.current.click();
+            inpRef.current.blur();
+            setQuery("");
+            setIsSearching(false);
+        }, 500);
         }
     };
 

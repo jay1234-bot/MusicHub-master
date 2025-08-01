@@ -54,16 +54,16 @@ export default function Player({ id }) {
     const getSong = useCallback(async () => {
         try {
             setIsLoading(true);
-            const get = await getSongsById(id);
-            const data = await get.json();
-            setData(data.data[0]);
-            if (data?.data[0]?.downloadUrl[2]?.url) {
-                setAudioURL(data?.data[0]?.downloadUrl[2]?.url);
-            } else if (data?.data[0]?.downloadUrl[1]?.url) {
-                setAudioURL(data?.data[0]?.downloadUrl[1]?.url);
-            } else {
-                setAudioURL(data?.data[0]?.downloadUrl[0]?.url);
-            }
+        const get = await getSongsById(id);
+        const data = await get.json();
+        setData(data.data[0]);
+        if (data?.data[0]?.downloadUrl[2]?.url) {
+            setAudioURL(data?.data[0]?.downloadUrl[2]?.url);
+        } else if (data?.data[0]?.downloadUrl[1]?.url) {
+            setAudioURL(data?.data[0]?.downloadUrl[1]?.url);
+        } else {
+            setAudioURL(data?.data[0]?.downloadUrl[0]?.url);
+        }
         } catch (error) {
             console.error('Error fetching song:', error);
             toast.error('Failed to load song');
@@ -74,13 +74,13 @@ export default function Player({ id }) {
 
     const getLyrics = useCallback(async () => {
         try {
-            const get = await getSongsLyricsById(id);
-            const data = await get.json();
-            setLyrics(data.data.lyrics);
+        const get = await getSongsLyricsById(id);
+        const data = await get.json();
+        setLyrics(data.data.lyrics);
         } catch (error) {
             console.error('Error fetching lyrics:', error);
             toast.error('Failed to load lyrics');
-        }
+    }
     }, [id]);
 
     const formatTime = useCallback((time) => {
@@ -94,20 +94,20 @@ export default function Player({ id }) {
         
         setIsDownloading(true);
         try {
-            const response = await fetch(audioURL);
-            const datas = await response.blob();
-            const url = URL.createObjectURL(datas);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${data.name}.mp3`;
-            a.click();
-            URL.revokeObjectURL(url);
+        const response = await fetch(audioURL);
+        const datas = await response.blob();
+        const url = URL.createObjectURL(datas);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${data.name}.mp3`;
+        a.click();
+        URL.revokeObjectURL(url);
             toast.success('Downloaded successfully');
         } catch (error) {
             console.error('Download error:', error);
             toast.error('Download failed');
         } finally {
-            setIsDownloading(false);
+        setIsDownloading(false);
         }
     }, [audioURL, data.name]);
 
@@ -125,14 +125,14 @@ export default function Player({ id }) {
     const handleShare = useCallback(() => {
         try {
             if (navigator.share) {
-                navigator.share({
-                    url: `https://${window.location.host}/${data.id}`
-                });
+            navigator.share({
+                url: `https://${window.location.host}/${data.id}`
+            });
             } else {
                 // Fallback for browsers that don't support navigator.share
                 navigator.clipboard.writeText(`https://${window.location.host}/${data.id}`);
                 toast.success('Link copied to clipboard');
-            }
+        }
         } catch (e) {
             toast.error('Something went wrong!');
         }
@@ -222,10 +222,10 @@ export default function Player({ id }) {
                                         <Skeleton className="h-6 sm:h-10 w-6 sm:w-10 rounded-full" />
                                         <Skeleton className="h-6 sm:h-10 w-6 sm:w-10 rounded-full" />
                                         <Skeleton className="h-6 sm:h-10 w-6 sm:w-10 rounded-full" />
-                                    </div>
                                 </div>
                             </div>
-                        ) : (
+                        </div>
+                    ) : (
                             <div className="flex flex-col justify-center w-full space-y-4 sm:space-y-6 lg:space-y-8 min-h-0">
                                 {/* Song Info - Responsive Typography */}
                                 <div className="text-center lg:text-left animate-fade-in-scale">
@@ -241,7 +241,7 @@ export default function Player({ id }) {
                                             {data.artists.primary[0]?.name || "unknown"}
                                         </Link>
                                     </p>
-                                </div>
+                            </div>
 
                                 {/* Audio Visualizer - Hidden on small screens */}
                                 <div className="hidden md:block">
@@ -274,7 +274,7 @@ export default function Player({ id }) {
                                             className="gap-1 sm:gap-2 rounded-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-6 text-sm sm:text-base lg:text-lg font-medium hover:scale-105 transition-all duration-200 hover-glow w-full sm:w-auto"
                                             onClick={togglePlayPause}
                                         >
-                                            {playing ? (
+                                        {playing ? (
                                                 <IoPause className="h-4 w-4 sm:h-5 sm:w-5" />
                                             ) : (
                                                 <Play className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -315,8 +315,8 @@ export default function Player({ id }) {
                                                 <Share2 className="h-4 w-4 sm:h-5 sm:w-5" />
                                             </Button>
                                             
-                                            <Credenza>
-                                                <CredenzaTrigger asChild>
+                                        <Credenza>
+                                            <CredenzaTrigger asChild>
                                                     <Button 
                                                         size="icon" 
                                                         variant="ghost" 
@@ -325,39 +325,39 @@ export default function Player({ id }) {
                                                     >
                                                         <Music2 className="h-4 w-4 sm:h-5 sm:w-5" />
                                                     </Button>
-                                                </CredenzaTrigger>
+                                            </CredenzaTrigger>
                                                 <CredenzaContent className="max-w-2xl w-[90vw] sm:w-auto">
-                                                    <CredenzaHeader>
+                                                <CredenzaHeader>
                                                         <CredenzaTitle className="text-lg sm:text-xl font-bold">
                                                             {data.name} - Lyrics
                                                         </CredenzaTitle>
-                                                    </CredenzaHeader>
-                                                    <CredenzaBody>
+                                                </CredenzaHeader>
+                                                <CredenzaBody>
                                                         <ScrollArea className="h-60 sm:h-80 custom-scrollbar">
-                                                            {lyrics ? (
+                                                        {lyrics ? (
                                                                 <div 
                                                                     dangerouslySetInnerHTML={{ __html: lyrics.replace(/\n/g, '<br />') }} 
                                                                     className="text-muted-foreground leading-relaxed prose prose-sm max-w-none text-sm sm:text-base"
                                                                 />
-                                                            ) : (
+                                                        ) : (
                                                                 <div className="grid gap-3">
-                                                                    <Skeleton className="h-4 w-full" />
-                                                                    <Skeleton className="h-4 w-full" />
-                                                                    <Skeleton className="h-4 w-full" />
+                                                                <Skeleton className="h-4 w-full" />
+                                                                <Skeleton className="h-4 w-full" />
+                                                                <Skeleton className="h-4 w-full" />
                                                                     <Skeleton className="h-4 w-3/4" />
-                                                                </div>
-                                                            )}
-                                                        </ScrollArea>
-                                                    </CredenzaBody>
-                                                </CredenzaContent>
-                                            </Credenza>
-                                        </div>
+                                                            </div>
+                                                        )}
+                                                    </ScrollArea>
+                                                </CredenzaBody>
+                                            </CredenzaContent>
+                                        </Credenza>
                                     </div>
                                 </div>
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
+            </div>
             </div>
 
             {/* Next Song Recommendation - Responsive */}

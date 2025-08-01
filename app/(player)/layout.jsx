@@ -8,9 +8,9 @@ export default function RootLayout({ children }) {
         <main className="h-screen bg-background flex flex-col overflow-hidden">
             <Header />
             <div className="flex-1 w-full max-w-full overflow-hidden">
-                <NextProvider>
-                    {children}
-                </NextProvider>
+            <NextProvider>
+                {children}
+            </NextProvider>
             </div>
             <Footer />
             <FloatingPlayer />
