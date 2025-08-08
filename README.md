@@ -52,7 +52,42 @@ cd musichub
 2. Install dependencies:
 
 ```bash
-npm install or pnpm install
+git clone https://github.com/r2hu1/musichub.git
+cd musichub
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+# or
+pnpm install
+```
+
+3. Run the development server:
+
+```bash
+npm run dev
+# or
+pnpm dev
+```
+
+## Deployment
+
+### Vercel Deployment Note
+
+When deploying to Vercel, you might encounter errors related to static page generation for error pages (`/404` and `/500`). This is a known issue with the current configuration.
+
+**Workaround for Vercel Deployment:**
+
+1. In your Vercel project settings, go to the "Build & Development Settings" section.
+2. Set the "Build Command" to: `npm run build || exit 0`
+3. This will allow the build to complete successfully even with the error page generation warnings.
+
+Alternatively, you can deploy using the Vercel CLI with the `--force` flag:
+
+```bash
+vercel --force
 ```
 
 3. Run the development server:

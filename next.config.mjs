@@ -28,10 +28,12 @@ const withPWAConfig = withPWA({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
-  buildExcludes: [/middleware-manifest.json$/],
-  fallbacks: {
-    document: '/404'
-  }
+  // Exclude specific files from PWA
+  buildExcludes: [
+    /middleware-manifest\.json$/,
+    /\.map$/,
+    /^.*\/_error.*$/,
+  ]
 });
 
 export default withPWAConfig(nextConfig);

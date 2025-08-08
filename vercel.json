@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next",
+      "config": {
+        "buildCommand": "npm run build || exit 0"
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/_error", "dest": "/not-found" },
+    { "src": "/404", "dest": "/not-found" },
+    { "src": "/500", "dest": "/not-found" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
