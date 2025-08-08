@@ -3,7 +3,6 @@ import withPWA from 'next-pwa';
 
 const nextConfig = {
   // Next.js configuration
-  output: 'export',
   // Image optimization
   images: {
     domains: ['i.scdn.co', 'mosaic.scdn.co', 'image-cdn-fa.spotifycdn.com'],
@@ -28,7 +27,11 @@ const withPWAConfig = withPWA({
   dest: 'public',
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === 'development'
+  disable: process.env.NODE_ENV === 'development',
+  buildExcludes: [/middleware-manifest.json$/],
+  fallbacks: {
+    document: '/404'
+  }
 });
 
 export default withPWAConfig(nextConfig);
