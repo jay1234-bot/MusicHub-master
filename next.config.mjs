@@ -1,6 +1,30 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  // You can add other config here like reactStrictMode, images, etc.
-};
+import withPWA from 'next-pwa';
+
+const nextConfig = withPWA({
+  // PWA configuration for better performance and offline capabilities
+  pwa: {
+    dest: 'public',
+    register: true,
+    skipWaiting: true,
+    disable: process.env.NODE_ENV === 'development'
+  },
+  // Image optimization
+  images: {
+    domains: ['i.scdn.co', 'mosaic.scdn.co', 'image-cdn-fa.spotifycdn.com'],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 1800,
+  },
+  // Performance optimizations
+  swcMinify: true,
+  reactStrictMode: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV !== 'development',
+  },
+  experimental: {
+    optimizeCss: true,
+    scrollRestoration: true,
+  },
+});
 
 export default nextConfig;

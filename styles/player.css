@@ -1,0 +1,127 @@
+/* Player Component Optimized Styles */
+
+/* Hardware acceleration classes */
+.hardware-accelerated {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Player container */
+.player-container {
+  isolation: isolate;
+  contain: content;
+}
+
+/* Album rotation animation */
+.album-rotate {
+  animation: rotate 20s linear infinite;
+  animation-play-state: paused;
+}
+
+.album-rotate.playing {
+  animation-play-state: running;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Optimized progress bar */
+.smooth-progress {
+  transition: width 0.1s linear;
+  will-change: width;
+  transform: translateZ(0);
+}
+
+/* Slider optimizations */
+.slider-glow-thumb:hover .SliderThumb {
+  box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.5);
+  transform: scale(1.2);
+  transition: all 0.2s ease;
+}
+
+.slider-animated-range .SliderRange {
+  transition: all 0.1s ease;
+  will-change: transform;
+}
+
+/* Player controls */
+.player-control {
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  will-change: transform, background-color;
+}
+
+.player-control:hover {
+  transform: scale(1.05);
+}
+
+.player-control:active {
+  transform: scale(0.95);
+}
+
+/* Loading skeleton */
+.skeleton-loading {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Volume slider */
+.volume-slider {
+  transition: opacity 0.3s ease;
+}
+
+/* Player loading indicator */
+.player-loading-indicator {
+  height: 16px;
+  width: 100%;
+  max-width: 100px;
+}
+
+/* Responsive optimizations */
+@media (max-width: 640px) {
+  .hardware-accelerated {
+    /* Reduce animation complexity on mobile */
+    transform: translateZ(0);
+    will-change: transform;
+  }
+  
+  /* Optimize for touch devices */
+  .player-control {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .album-rotate {
+    animation: none;
+  }
+  
+  .hardware-accelerated {
+    will-change: auto;
+    transform: none;
+  }
+  
+  .smooth-progress {
+    transition: none;
+  }
+}

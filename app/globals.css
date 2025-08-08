@@ -150,12 +150,43 @@
 }
 .animate-waveform-bar {
   animation: waveform-bar 1.2s infinite cubic-bezier(0.4,0,0.2,1);
+  will-change: height;
+  transform: translateZ(0);
 }
 .waveform-bars > div {
   min-height: 0.5rem;
   max-height: 2.5rem;
   height: 1.5rem;
-  transition: height 0.2s;
+  transition: height 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: height;
+  transform: translateZ(0);
+}
+
+/* Optimized Waveform Animations */
+.waveform-bars-optimized {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 40px;
+}
+
+.waveform-bars-optimized > div {
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(to top, rgba(99, 102, 241, 0.5), rgba(14, 165, 233, 0.8));
+  transform: translateZ(0);
+  will-change: height;
+  transition: height 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.waveform-bars-optimized > div:nth-child(odd) {
+  animation-delay: 0.15s;
+}
+
+.waveform-active-bar {
+  background: linear-gradient(to top, rgba(139, 92, 246, 0.8), rgba(59, 130, 246, 1)) !important;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
 }
 
 /* New Beautiful Animations */
@@ -436,15 +467,43 @@
 /* Performance Optimizations */
 .will-change-transform {
   will-change: transform;
+  transform: translateZ(0);
 }
 
 .will-change-opacity {
   will-change: opacity;
+  transform: translateZ(0);
+}
+
+.will-change-multiple {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* Hardware Acceleration Classes */
+.hardware-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.hardware-accelerated-3d {
+  transform-style: preserve-3d;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 /* Smooth Transitions */
 .transition-smooth {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-fast {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-ultra-smooth {
+  transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 /* Enhanced Focus States */
@@ -455,6 +514,8 @@
 /* Better Loading States */
 .loading-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: opacity;
+  transform: translateZ(0);
 }
 
 @keyframes pulse {
@@ -463,6 +524,79 @@
   }
   50% {
     opacity: .5;
+  }
+}
+
+/* Optimized Loading Indicators */
+@keyframes skeleton-loading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.skeleton-loading {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.05) 25%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0.05) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  will-change: background-position;
+  transform: translateZ(0);
+}
+
+/* Lazy Loading Images */
+.lazy-image {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  will-change: opacity;
+  transform: translateZ(0);
+}
+
+.lazy-image.loaded {
+  opacity: 1;
+}
+
+/* Optimized Player Loading */
+.player-loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 24px;
+}
+
+.player-loading-indicator > div {
+  width: 4px;
+  height: 100%;
+  background-color: rgba(139, 92, 246, 0.7);
+  border-radius: 2px;
+  animation: loading-bar 1s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.player-loading-indicator > div:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.player-loading-indicator > div:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.player-loading-indicator > div:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+@keyframes loading-bar {
+  0%, 100% {
+    transform: scaleY(0.5);
+  }
+  50% {
+    transform: scaleY(1);
   }
 }
 
@@ -507,12 +641,70 @@
 
 .audio-wave {
   animation: audio-wave 1s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .audio-wave:nth-child(2) { animation-delay: 0.1s; }
 .audio-wave:nth-child(3) { animation-delay: 0.2s; }
 .audio-wave:nth-child(4) { animation-delay: 0.3s; }
 .audio-wave:nth-child(5) { animation-delay: 0.4s; }
+
+/* Optimized Player UI Animations */
+@keyframes smooth-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.progress-bar-animated {
+  transform-origin: left;
+  animation: smooth-progress 0.3s ease-out forwards;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Smooth Volume Slider */
+.volume-slider {
+  transition: all 0.2s ease-out;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+.volume-slider:hover {
+  transform: scaleY(1.05);
+}
+
+/* Player Controls Animations */
+.player-control {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.player-control:hover {
+  transform: scale(1.1);
+}
+
+.player-control:active {
+  transform: scale(0.95);
+}
+
+/* Album Art Animation */
+@keyframes album-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.album-rotate {
+  animation: album-rotate 20s linear infinite;
+  animation-play-state: paused;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.album-rotate.playing {
+  animation-play-state: running;
+}
 
 /* Responsive Typography */
 .text-responsive {
@@ -615,6 +807,33 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .animate-waveform-bar,
+  .audio-wave,
+  .animate-float,
+  .animate-pulse-glow,
+  .animate-gradient-shift,
+  .animate-rotate-slow,
+  .animate-bounce-gentle,
+  .album-rotate {
+    animation: none !important;
+  }
+  
+  .progress-bar-animated {
+    animation: none !important;
+    transform: scaleX(1) !important;
+  }
+  
+  /* Simplified player UI for reduced motion */
+  .reduced-motion-player {
+    transition: none !important;
+  }
+  
+  .reduced-motion-player .player-control:hover,
+  .reduced-motion-player .player-control:active {
+    transform: none !important;
   }
 }
 

@@ -1,93 +1,137 @@
 "use client"
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 
-export default function AudioVisualizer({ isPlaying, audioRef }) {
+// Memoized component to prevent unnecessary re-renders
+const AudioVisualizer = memo(function AudioVisualizer({ isPlaying, audioRef }) {
     const canvasRef = useRef(null);
     const animationRef = useRef(null);
+    const audioContextRef = useRef(null);
+    const analyserRef = useRef(null);
+    const sourceRef = useRef(null);
+    const dataArrayRef = useRef(null);
+    const gradientRef = useRef(null);
     const [isVisible, setIsVisible] = useState(false);
+    const frameCountRef = useRef(0);
+    const lastFrameTimeRef = useRef(0);
 
+    // Initialize audio context and analyzer only once
     useEffect(() => {
         if (!audioRef?.current || !canvasRef.current) return;
 
         const audio = audioRef.current;
         const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { alpha: false }); // Optimize with alpha: false
         
-        // Set canvas size
+        // Set canvas size with debounced resize handler
         const resizeCanvas = () => {
+            if (!canvas) return;
             const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * window.devicePixelRatio;
-            canvas.height = rect.height * window.devicePixelRatio;
-            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            const dpr = Math.min(window.devicePixelRatio, 2); // Cap at 2x for performance
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            // Pre-create gradient once after resize
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#a855f7');
+            gradient.addColorStop(0.5, '#ec4899');
+            gradient.addColorStop(1, '#3b82f6');
+            gradientRef.current = gradient;
+        };
+
+        // Debounced resize handler
+        let resizeTimeout;
+        const debouncedResize = () => {
+            cancelAnimationFrame(animationRef.current);
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                resizeCanvas();
+                if (isPlaying) requestAnimationFrame(draw);
+            }, 250);
         };
 
         resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('resize', debouncedResize);
 
-        // Audio context setup
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const analyser = audioContext.createAnalyser();
-        const source = audioContext.createMediaElementSource(audio);
+        // Audio context setup - only create once
+        if (!audioContextRef.current) {
+            audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+            analyserRef.current = audioContextRef.current.createAnalyser();
+            sourceRef.current = audioContextRef.current.createMediaElementSource(audio);
+            
+            // Optimize FFT size for better performance
+            analyserRef.current.fftSize = 128; // Reduced from 256 for better performance
+            sourceRef.current.connect(analyserRef.current);
+            analyserRef.current.connect(audioContextRef.current.destination);
+            
+            const bufferLength = analyserRef.current.frequencyBinCount;
+            dataArrayRef.current = new Uint8Array(bufferLength);
+        }
 
-        analyser.fftSize = 256;
-        source.connect(analyser);
-        analyser.connect(audioContext.destination);
-
-        const bufferLength = analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
-
-        const draw = () => {
+        // Optimized draw function with frame limiting
+        const draw = (timestamp) => {
             if (!isPlaying) {
                 animationRef.current = requestAnimationFrame(draw);
                 return;
             }
 
-            analyser.getByteFrequencyData(dataArray);
-
+            // Limit to ~30fps for better performance
+            if (timestamp - lastFrameTimeRef.current < 33) {
+                animationRef.current = requestAnimationFrame(draw);
+                return;
+            }
+            
+            lastFrameTimeRef.current = timestamp;
+            frameCountRef.current++;
+            
+            analyserRef.current.getByteFrequencyData(dataArrayRef.current);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            const bufferLength = analyserRef.current.frequencyBinCount;
             const barWidth = (canvas.width / bufferLength) * 2.5;
-            let barHeight;
             let x = 0;
 
-            for (let i = 0; i < bufferLength; i++) {
-                barHeight = (dataArray[i] / 255) * canvas.height * 0.8;
-
-                // Create gradient
-                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-                gradient.addColorStop(0, '#a855f7');
-                gradient.addColorStop(0.5, '#ec4899');
-                gradient.addColorStop(1, '#3b82f6');
-
-                ctx.fillStyle = gradient;
-                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-
-                // Add glow effect
+            // Use pre-created gradient
+            ctx.fillStyle = gradientRef.current;
+            
+            // Only apply shadow every other frame for performance
+            const useShadow = frameCountRef.current % 2 === 0;
+            if (useShadow) {
                 ctx.shadowColor = '#a855f7';
-                ctx.shadowBlur = 10;
-                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-                ctx.shadowBlur = 0;
+                ctx.shadowBlur = 5; // Reduced blur for better performance
+            }
 
+            // Draw bars in batches for better performance
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = (dataArrayRef.current[i] / 255) * canvas.height * 0.8;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
                 x += barWidth + 1;
             }
+
+            // Reset shadow after drawing
+            if (useShadow) ctx.shadowBlur = 0;
 
             animationRef.current = requestAnimationFrame(draw);
         };
 
         if (isPlaying) {
             setIsVisible(true);
-            draw();
+            // Resume audio context if suspended (needed for Chrome)
+            if (audioContextRef.current.state === 'suspended') {
+                audioContextRef.current.resume();
+            }
+            animationRef.current = requestAnimationFrame(draw);
         } else {
             setIsVisible(false);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (canvas) ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
         return () => {
-            window.removeEventListener('resize', resizeCanvas);
+            window.removeEventListener('resize', debouncedResize);
+            clearTimeout(resizeTimeout);
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current);
             }
-            audioContext.close();
         };
     }, [isPlaying, audioRef]);
 
@@ -102,4 +146,4 @@ export default function AudioVisualizer({ isPlaying, audioRef }) {
             <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent pointer-events-none" />
         </div>
     );
-} 
+});
