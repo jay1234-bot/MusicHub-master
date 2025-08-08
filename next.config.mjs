@@ -3,11 +3,13 @@ import withPWA from 'next-pwa';
 
 const nextConfig = {
   // Next.js configuration
+  output: 'export',
   // Image optimization
   images: {
     domains: ['i.scdn.co', 'mosaic.scdn.co', 'image-cdn-fa.spotifycdn.com'],
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 1800,
+    unoptimized: process.env.NODE_ENV === 'production',
   },
   // Performance optimizations
   swcMinify: true,
