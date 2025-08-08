@@ -1,14 +1,8 @@
 /** @type {import('next').NextConfig} */
 import withPWA from 'next-pwa';
 
-const nextConfig = withPWA({
-  // PWA configuration for better performance and offline capabilities
-  pwa: {
-    dest: 'public',
-    register: true,
-    skipWaiting: true,
-    disable: process.env.NODE_ENV === 'development'
-  },
+const nextConfig = {
+  // Next.js configuration
   // Image optimization
   images: {
     domains: ['i.scdn.co', 'mosaic.scdn.co', 'image-cdn-fa.spotifycdn.com'],
@@ -24,7 +18,15 @@ const nextConfig = withPWA({
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
-  },
+  }
+};
+
+// Apply PWA configuration
+const withPWAConfig = withPWA({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development'
 });
 
-export default nextConfig;
+export default withPWAConfig(nextConfig);

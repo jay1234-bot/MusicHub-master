@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useEffect, useRef, useState, useMemo, useCallback } from "react";
+import React, { useContext, useEffect, useRef, useState, useMemo, useCallback, memo } from "react";
 import { Button } from "../ui/button";
 import { Repeat, Repeat1, Play, Pause, Download, SkipBack, SkipForward, ChevronDown, Maximize2, Heart, Share2, Volume2, VolumeX, Shuffle } from "lucide-react";
 import { Slider } from "../ui/slider";
@@ -10,6 +10,13 @@ import { useMusic } from "../music-provider";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+
+// Memoized formatTime function for better performance
+const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+};
 
 // Dynamically import heavy components
 const Waveform = dynamic(() => import('./waveform'), { ssr: false });
@@ -157,7 +164,7 @@ function MinimizedPlayer({ data, playing, togglePlayPause, setExpanded }) {
 }
 
 // Memoized ExpandedPlayer component for better performance
-const ExpandedPlayer = memo(function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, handleSeek, currentTime, duration, setExpanded, audioURL }) {
+function ExpandedPlayer({ data, playing, togglePlayPause, loopSong, isLooping, handleSeek, currentTime, duration, setExpanded, audioURL }) {
   // Use localStorage for persistent state
   const [isLiked, setIsLiked] = useState(() => {
     if (typeof window !== 'undefined' && data?.id) {
@@ -237,7 +244,7 @@ const ExpandedPlayer = memo(function ExpandedPlayer({ data, playing, togglePlayP
       setBackgroundIndex((prev) => (prev + 1) % backgrounds.length);
     }, 10000);
     return () => clearInterval(interval);
-  }, [backgrounds.length]);}]},{
+  }, [backgrounds.length]);
 
   return (
     <motion.div
@@ -623,20 +630,7 @@ const ExpandedPlayer = memo(function ExpandedPlayer({ data, playing, togglePlayP
   );
 }
 
-function formatTime(time) {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-}
-
-// Memoized formatTime function for better performance
-const formatTime = React.memo(function formatTime(time) {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-});
-
-const Player = React.memo(function Player() {
+function Player() {
     const [data, setData] = useState([]);
     const [playing, setPlaying] = useState(false);
     const audioRef = useRef(null);
@@ -800,6 +794,6 @@ const Player = React.memo(function Player() {
             </AnimatePresence>
         </main>
     );
-});
+}
 
 export default Player;
