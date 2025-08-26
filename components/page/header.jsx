@@ -19,8 +19,8 @@ export default function Header() {
             y: 0, 
             opacity: 1,
             transition: {
-                duration: 0.6,
-                ease: "easeOut"
+                duration: 0.8,
+                ease: [0.6, 0.05, -0.01, 0.9]
             }
         }
     };
@@ -29,15 +29,17 @@ export default function Header() {
         hidden: { 
             opacity: 0, 
             y: -20,
-            scale: 0.95
+            scale: 0.98,
+            filter: "blur(8px)"
         },
         visible: { 
             opacity: 1, 
             y: 0,
             scale: 1,
+            filter: "blur(0px)",
             transition: {
-                duration: 0.3,
-                ease: "easeOut"
+                duration: 0.4,
+                ease: [0.6, 0.05, -0.01, 0.9]
             }
         },
         exit: {

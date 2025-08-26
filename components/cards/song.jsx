@@ -15,24 +15,31 @@ export default function SongCard({ title, image, artist, id, desc }) {
     };
 
     const cardVariants = {
-        hidden: { opacity: 0, scale: 0.8, y: 20 },
+        hidden: { 
+            opacity: 0, 
+            scale: 0.95, 
+            y: 20,
+            filter: "blur(10px)"
+        },
         visible: { 
             opacity: 1, 
             scale: 1, 
             y: 0,
+            filter: "blur(0px)",
             transition: {
-                duration: 0.5,
-                ease: "easeOut"
+                duration: 0.6,
+                ease: [0.6, 0.05, -0.01, 0.9]
             }
         }
     };
 
     const imageVariants = {
         hover: {
-            scale: 1.05,
+            scale: 1.08,
+            filter: "brightness(1.1)",
             transition: {
-                duration: 0.3,
-                ease: "easeOut"
+                duration: 0.4,
+                ease: [0.6, 0.05, -0.01, 0.9]
             }
         }
     };

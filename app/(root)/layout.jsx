@@ -9,20 +9,20 @@ import { usePathname } from "next/navigation";
 export default function RootLayout({ children }) {
     const pathname = usePathname();
     return (
-        <main className="min-h-screen bg-background flex flex-col">
+        <main className="min-h-screen bg-background flex flex-col relative backdrop-blur-sm">
             <Header />
-            <div className="px-6 sm:hidden mb-4">
+            <div className="px-6 sm:hidden mb-4 animate-fade-in">
                 <Search />
             </div>
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden relative">
             <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                     key={pathname}
-                    initial={{ opacity: 0, y: 16 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -16 }}
-                    transition={{ duration: 0.35, ease: "easeInOut" }}
-                        className="h-full overflow-auto"
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                        className="h-full overflow-auto scrollbar-hide"
                 >
                     {children}
                 </motion.div>

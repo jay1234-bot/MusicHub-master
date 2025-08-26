@@ -37,7 +37,7 @@ function MinimizedPlayer({ data, playing, togglePlayPause, setExpanded }) {
 
   return (
     <motion.div
-      className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-white/20 dark:border-slate-700/30 shadow-2xl"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border-t border-white/10 dark:border-slate-700/20 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_-8px_30px_rgba(0,0,0,0.3)]"
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 100, opacity: 0 }}
