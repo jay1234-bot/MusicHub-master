@@ -1,9 +1,8 @@
 "use client"
 import { useEffect, useRef, useState, memo } from 'react';
 
-// Memoized component to prevent unnecessary re-renders
-const defaultExport = AudioVisualizer;
-export { defaultExport as default, AudioVisualizer };
+// Optimized Audio Visualizer Component
+const AudioVisualizer = memo(({ isPlaying, audioRef }) => {
     const canvasRef = useRef(null);
     const animationRef = useRef(null);
     const audioContextRef = useRef(null);
@@ -56,17 +55,22 @@ export { defaultExport as default, AudioVisualizer };
 
         // Audio context setup - only create once
         if (!audioContextRef.current) {
-            audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-            analyserRef.current = audioContextRef.current.createAnalyser();
-            sourceRef.current = audioContextRef.current.createMediaElementSource(audio);
-            
-            // Optimize FFT size for better performance
-            analyserRef.current.fftSize = 128; // Reduced from 256 for better performance
-            sourceRef.current.connect(analyserRef.current);
-            analyserRef.current.connect(audioContextRef.current.destination);
-            
-            const bufferLength = analyserRef.current.frequencyBinCount;
-            dataArrayRef.current = new Uint8Array(bufferLength);
+            try {
+                audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+                analyserRef.current = audioContextRef.current.createAnalyser();
+                sourceRef.current = audioContextRef.current.createMediaElementSource(audio);
+                
+                // Optimize FFT size for better performance
+                analyserRef.current.fftSize = 128; // Reduced from 256 for better performance
+                sourceRef.current.connect(analyserRef.current);
+                analyserRef.current.connect(audioContextRef.current.destination);
+                
+                const bufferLength = analyserRef.current.frequencyBinCount;
+                dataArrayRef.current = new Uint8Array(bufferLength);
+            } catch (error) {
+                console.warn('Audio context not available:', error);
+                return;
+            }
         }
 
         // Optimized draw function with frame limiting
@@ -85,6 +89,8 @@ export { defaultExport as default, AudioVisualizer };
             lastFrameTimeRef.current = timestamp;
             frameCountRef.current++;
             
+            if (!analyserRef.current || !dataArrayRef.current) return;
+            
             analyserRef.current.getByteFrequencyData(dataArrayRef.current);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -93,7 +99,7 @@ export { defaultExport as default, AudioVisualizer };
             let x = 0;
 
             // Use pre-created gradient
-            ctx.fillStyle = gradientRef.current;
+            ctx.fillStyle = gradientRef.current || '#a855f7';
             
             // Only apply shadow every other frame for performance
             const useShadow = frameCountRef.current % 2 === 0;
@@ -118,7 +124,7 @@ export { defaultExport as default, AudioVisualizer };
         if (isPlaying) {
             setIsVisible(true);
             // Resume audio context if suspended (needed for Chrome)
-            if (audioContextRef.current.state === 'suspended') {
+            if (audioContextRef.current?.state === 'suspended') {
                 audioContextRef.current.resume();
             }
             animationRef.current = requestAnimationFrame(draw);
@@ -148,3 +154,7 @@ export { defaultExport as default, AudioVisualizer };
         </div>
     );
 });
+
+AudioVisualizer.displayName = 'AudioVisualizer';
+
+export default AudioVisualizer;

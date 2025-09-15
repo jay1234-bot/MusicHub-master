@@ -4,8 +4,7 @@ import withPWA from 'next-pwa';
 const nextConfig = {
   output: 'export',
   trailingSlash: true,
-  // Next.js configuration
-  // Image optimization
+  // Image optimization for static export
   images: {
     unoptimized: true,
     domains: ['i.scdn.co', 'mosaic.scdn.co', 'image-cdn-fa.spotifycdn.com'],
@@ -35,6 +34,10 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
+  },
+  // Disable middleware warning for static export
+  async rewrites() {
+    return [];
   }
 };
 
