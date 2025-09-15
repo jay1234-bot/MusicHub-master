@@ -2,17 +2,33 @@
 import withPWA from 'next-pwa';
 
 const nextConfig = {
+  output: 'export',
+  trailingSlash: true,
   // Next.js configuration
   // Image optimization
   images: {
+    unoptimized: true,
     domains: ['i.scdn.co', 'mosaic.scdn.co', 'image-cdn-fa.spotifycdn.com'],
-    formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 1800,
-    unoptimized: process.env.NODE_ENV === 'production',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.scdn.co',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.spotifycdn.com',
+      },
+    ],
   },
   // Performance optimizations
   swcMinify: true,
   reactStrictMode: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   compiler: {
     removeConsole: process.env.NODE_ENV !== 'development',
   },

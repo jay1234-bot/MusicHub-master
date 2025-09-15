@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState, memo } from 'react';
 
 // Memoized component to prevent unnecessary re-renders
-const AudioVisualizer = memo(function AudioVisualizer({ isPlaying, audioRef }) {
+const defaultExport = AudioVisualizer;
+export { defaultExport as default, AudioVisualizer };
     const canvasRef = useRef(null);
     const animationRef = useRef(null);
     const audioContextRef = useRef(null);

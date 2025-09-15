@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 
 export function middleware(request) {
-  // Handle 404 errors
-  if (request.nextUrl.pathname.startsWith('/_error') || 
-      request.nextUrl.pathname === '/404' || 
-      request.nextUrl.pathname === '/500') {
-    // Redirect to custom error page
-    return NextResponse.rewrite(new URL('/not-found', request.url));
+  // Handle errors
+  if (request.nextUrl.pathname.startsWith('/_error')) {
+    // Handle different error types
+    if (request.nextUrl.pathname.includes('404')) {
+      return NextResponse.rewrite(new URL('/not-found', request.url));
+    }
+    if (request.nextUrl.pathname.includes('500')) {
+      return NextResponse.rewrite(new URL('/error', request.url));
+    }
   }
 
   return NextResponse.next();

@@ -1,6 +1,7 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import { getSongsById, getSongsLyricsById } from "@/lib/fetch";
+import { getSongsById } from "@/lib/fetch";
+import { getSongsLyricsById } from "@/lib/lyrics";
 import { Download, Pause, Play, RedoDot, UndoDot, Repeat, Loader2, Bookmark, BookmarkCheck, Repeat1, Share2, Music2 } from "lucide-react";
 import { useContext, useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
