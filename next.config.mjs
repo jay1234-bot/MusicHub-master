@@ -4,6 +4,8 @@ import withPWA from 'next-pwa';
 const nextConfig = {
   output: 'export',
   trailingSlash: true,
+  // Disable server-side features for static export
+  distDir: 'out',
   // Image optimization for static export
   images: {
     unoptimized: true,
@@ -35,9 +37,9 @@ const nextConfig = {
     optimizeCss: true,
     scrollRestoration: true,
   },
-  // Disable middleware warning for static export
-  async rewrites() {
-    return [];
+  // Static export specific settings
+  async generateBuildId() {
+    return 'build';
   }
 };
 
@@ -47,11 +49,14 @@ const withPWAConfig = withPWA({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
-  // Exclude specific files from PWA
+  // Exclude specific files from PWA for static export
   buildExcludes: [
     /middleware-manifest\.json$/,
     /\.map$/,
     /^.*\/_error.*$/,
+    /chunk-map\.json$/,
+    /app-build-manifest\.json$/,
+    /font-manifest\.json$/
   ]
 });
 
